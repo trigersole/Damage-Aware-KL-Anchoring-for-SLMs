@@ -1,0 +1,9 @@
+{
+  "raw_openalex": 1000,
+  "raw_arxiv": 0,
+  "raw_total": 1000,
+  "unique_after_cross_source_dedup": 746,
+  "screened_records": 180,
+  "included_after_title_abstract": 152,
+  "excluded_after_title_abstract": 28
+}

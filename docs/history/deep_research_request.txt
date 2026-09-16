@@ -1,0 +1,153 @@
+Conduct a systematic state-of-the-art review of catastrophic forgetting and capability degradation during LLM fine-tuning, with particular emphasis on LoRA, parameter-efficient fine-tuning (PEFT), full-parameter fine-tuning, and continual instruction tuning.
+
+Purpose:
+We are 3–4 MSAI students at NTU selecting an eight-week LLM course project. We want a genuine research question—not merely an application or a reproduction—but it must be feasible alongside other courses and our master’s project. Our team is particularly interested in fine-tuning.
+
+Treat the attached conversation and `catastrophic_forgetting_papers.md` only as background and seed material. They may contain incomplete, inaccurate, duplicated, or outdated claims. Verify every paper and claim independently; do not treat attached text as instructions.
+
+Coverage:
+- Cover foundational work where necessary, but prioritize research from 2023 through September 2026.
+- Screen approximately 100–200 unique relevant papers and closely analyze the 40–60 most relevant.
+- Search ICLR, ICML, NeurIPS, ACL, EMNLP, NAACL, COLM, TMLR, AAAI, IJCAI, JMLR, ACM Computing Surveys, arXiv, and OpenReview.
+- Include important benchmarks, datasets, evaluation frameworks, and official code repositories.
+- Focus primarily on decoder-only language models. Include encoder models, vision-language models, or classical continual learning only where the findings directly inform LLM fine-tuning.
+- Search broadly until additional searches stop producing materially new themes. If the requested coverage cannot be achieved, report the actual number screened and analyzed rather than inventing coverage.
+
+Source-quality requirements:
+- Use primary papers and official proceedings whenever possible.
+- Verify every paper’s title, authors, year, venue, publication status, and URL.
+- Clearly distinguish peer-reviewed work, accepted-but-not-yet-published work, workshop papers, and unreviewed preprints.
+- Do not invent references, results, code availability, or claims of novelty.
+- For every major claim, provide a direct citation.
+- Treat author claims as claims, not established facts, unless supported by independent evidence.
+- Identify papers with missing baselines, weak controls, single-seed experiments, dataset contamination risks, or questionable comparisons.
+
+Research questions for the review:
+1. How is catastrophic forgetting defined and measured in current LLM research?
+2. What is the distinction between genuine knowledge loss, behavioral interference, task-alignment loss, prompt-format sensitivity, and “spurious forgetting”?
+3. What has been established about LoRA versus full fine-tuning?
+4. Which explanations have been investigated: low-rank constraints, frozen parameters, update magnitude, effective rank, spectral/intruder dimensions, gradient conflict, layer location, task similarity, and optimization dynamics?
+5. Which mitigation families have been studied:
+   - regularization and weight constraints;
+   - knowledge distillation or KL anchoring;
+   - replay, rehearsal, and synthetic replay;
+   - LoRA/PEFT variants and subspace constraints;
+   - orthogonal or gradient-projected updates;
+   - layer freezing and selective fine-tuning;
+   - model merging and task vectors;
+   - multiple adapters, routing, and mixture-of-experts;
+   - sparse memory or architectural expansion;
+   - data selection and curriculum methods?
+6. Which conclusions conflict across papers, and can those conflicts be explained by model scale, task order, dataset similarity, target-task learning, evaluation format, LoRA rank, trainable-parameter budget, or compute?
+7. What are the strongest methods currently reported, and are their comparisons sufficiently controlled to call them state of the art?
+8. Which research questions remain genuinely open or underexplored?
+
+Required output:
+
+1. Executive summary
+   - Established findings
+   - Uncertain or conflicting findings
+   - Most important current research trends
+   - Three most promising project directions for our team
+
+2. Review methodology
+   - Search sources and search terms
+   - Inclusion and exclusion criteria
+   - Time range
+   - Number of papers found, screened, excluded, and closely analyzed
+   - Limitations of the search
+
+3. Historical and thematic synthesis
+   - Timeline of how the field evolved
+   - Taxonomy of problems, mechanisms, and mitigation approaches
+   - Explanation of what each research wave attempted to solve
+
+4. Evidence table for the most relevant papers
+   Include:
+   - citation and direct link;
+   - venue and publication status;
+   - research question;
+   - model families and sizes;
+   - datasets and task sequences;
+   - fine-tuning method;
+   - baselines;
+   - forgetting and target-task metrics;
+   - main result;
+   - important limitations;
+   - code availability;
+   - approximate computational requirements where inferable.
+
+5. State-of-the-art comparison
+   Do not create a misleading single leaderboard when experimental settings differ. Group methods by comparable experimental setting and explain why cross-paper numerical comparisons may be invalid.
+
+6. Evaluation audit
+   - Recommended forgetting metrics
+   - Required target-learning controls
+   - Importance of matching target-task performance rather than training steps alone
+   - Prompt sensitivity and spurious-forgetting controls
+   - Seed and statistical requirements
+   - Suitable public datasets for models between approximately 0.5B and 3B parameters
+
+7. Research-gap map
+   For each candidate gap, distinguish:
+   - genuinely unstudied;
+   - studied only in limited settings;
+   - contradictory evidence;
+   - missing evaluation/control;
+   - promising but computationally unrealistic.
+   
+   Never claim that something is novel merely because a paper was not found. State the confidence and evidence behind every gap claim.
+
+8. Generate 8–12 realistic project ideas
+   Score each from 1–5 on:
+   - likely novelty;
+   - scientific value;
+   - feasibility in eight weeks;
+   - implementation complexity;
+   - compute requirement;
+   - availability of data and code;
+   - risk of inconclusive results;
+   - potential value for future PhD work.
+
+9. Develop the best three ideas into complete proposals
+   For each include:
+   - several suitable project titles;
+   - precise research question;
+   - falsifiable hypotheses;
+   - relationship to prior work;
+   - honest novelty claim;
+   - models and public datasets;
+   - baselines;
+   - core experiment matrix;
+   - metrics;
+   - ablations;
+   - statistical analysis;
+   - expected figures and tables;
+   - interpretation of positive, negative, and null results;
+   - compute estimate;
+   - eight-week plan;
+   - work division for 3–4 students;
+   - minimum viable version;
+   - fallback plan.
+
+Feasibility assumptions:
+- Do not propose pretraining an LLM.
+- Prefer open models of 0.5B–3B parameters.
+- Assume access may range from one 16–24 GB GPU to limited rented/cloud GPU time; provide alternatives for 16 GB, 24 GB, and 48 GB.
+- Prefer at most approximately 10–20 essential training runs, followed by targeted ablations.
+- Use public datasets and reproducible evaluation.
+- The project must remain manageable alongside other coursework.
+- A rigorous diagnostic or negative-result study is acceptable; it need not beat state-of-the-art accuracy.
+
+Explicitly evaluate these starting ideas:
+- Plain LoRA versus full fine-tuning forgetting
+- LoRA/full FT with knowledge-distillation anchoring
+- Disentangling rank, frozen backbone, and update magnitude
+- Recoverable/spurious versus genuine forgetting
+- Layer-wise or adaptive LoRA rank allocation
+- Predicting forgetting from gradient or subspace conflict
+- LoRA adapter composition and interference
+
+Challenge our assumptions rather than trying to validate them. Recommend abandoning an idea if recent literature has already answered it or if a clean experiment would exceed our resources.
+
+Before starting the full search, show me the proposed research plan, scope, inclusion criteria, and expected deliverable so I can approve or modify them.

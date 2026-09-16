@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "condition": null,
+  "experiment_id": null,
+  "output_directory": null,
+  "model": {
+    "repository_id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": null
+  },
+  "datasets": {
+    "gsm8k": {
+      "repository_id": "openai/gsm8k",
+      "revision": null,
+      "configuration": "main",
+      "split": "train",
+      "preprocessing": null,
+      "validation_ids_manifest": null,
+      "test_ids_manifest": null
+    },
+    "boolq": {
+      "repository_id": "google/boolq",
+      "revision": null,
+      "configuration": "default",
+      "split": "validation",
+      "preprocessing": null
+    },
+    "hellaswag": {
+      "repository_id": "Rowan/hellaswag",
+      "revision": null,
+      "configuration": "default",
+      "split": "validation",
+      "preprocessing": null
+    },
+    "arc_easy": {
+      "repository_id": "allenai/ai2_arc",
+      "revision": null,
+      "configuration": "ARC-Easy",
+      "split": "test",
+      "preprocessing": null
+    },
+    "anchors": {
+      "repository_id": null,
+      "revision": null,
+      "configuration": null,
+      "split": null,
+      "preprocessing": null,
+      "eligible_ids_manifest": null,
+      "exclusions_manifest": null
+    }
+  },
+  "seed": null,
+  "lora": {
+    "rank": null,
+    "alpha": null,
+    "dropout": null,
+    "target_modules": null,
+    "precision": null,
+    "quantization": null
+  },
+  "training": {
+    "training_ids_manifest": null,
+    "optimizer": null,
+    "learning_rate": null,
+    "scheduler": null,
+    "warmup_steps": null,
+    "batch_policy": null,
+    "per_device_batch_size": null,
+    "gradient_accumulation_steps": null,
+    "max_steps": null,
+    "epochs": null,
+    "target_examples": null,
+    "target_tokens": null,
+    "anchor_interleave_every_steps": null
+  },
+  "runtime": {
+    "device": null,
+    "max_sequence_tokens": null,
+    "validation_max_new_tokens": null,
+    "target_system_prompt": null,
+    "anchor_system_prompt": null,
+    "teacher_max_new_tokens": null,
+    "anchor_tokens_per_update": null,
+    "checkpoint_every_steps": null,
+    "max_grad_norm": null,
+    "scale_kl_by_temperature_squared": null,
+    "target_answer_append_eos": null
+  },
+  "anchor_selection": {
+    "method": null,
+    "token_budget": null,
+    "damage_weight": null,
+    "candidate_pool_manifest": null,
+    "selected_ids_manifest": null
+  },
+  "kl": {
+    "direction": null,
+    "temperature": null,
+    "coefficient": null,
+    "token_mask": null,
+    "normalization": null,
+    "teacher_continuation": null
+  },
+  "evaluation": {
+    "harness": null,
+    "harness_revision": null,
+    "chat_template": null,
+    "model_dtype": null,
+    "model_quantization": null,
+    "trust_remote_code": false,
+    "tokenizer": {
+      "repo_id": "Qwen/Qwen2.5-1.5B-Instruct",
+      "revision": null,
+      "use_fast": null,
+      "add_special_tokens": null
+    },
+    "generation": {
+      "max_new_tokens": null,
+      "do_sample": null,
+      "num_beams": null,
+      "skip_special_tokens": null
+    },
+    "few_shot": null,
+    "checkpoint_selection_rule": null,
+    "fields": {
+      "gsm8k": {"question": "question", "answer": "answer"},
+      "boolq": {"passage": "passage", "question": "question", "answer": "answer"},
+      "hellaswag": {"context": "ctx", "choices": "endings", "answer": "label"},
+      "arc_easy": {"question": "question", "choices": "choices", "choice_text": "text", "choice_key": "label", "answer": "answerKey"}
+    },
+    "limits": {
+      "gsm8k": null,
+      "boolq": null,
+      "hellaswag": null,
+      "arc_easy": null
+    },
+    "prompt_templates": {
+      "gsm8k": null,
+      "boolq": null,
+      "hellaswag": null,
+      "arc_easy": null
+    },
+    "scoring": {
+      "gsm8k": {"answer_extraction": "gsm8k_final_number_v1"},
+      "boolq": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": null,
+        "choice_prefix": null,
+        "choice_texts": null
+      },
+      "hellaswag": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": null,
+        "choice_prefix": null
+      },
+      "arc_easy": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": null,
+        "choice_prefix": null
+      }
+    }
+  },
+  "environment": {
+    "python_version": null,
+    "software_versions": null,
+    "hardware": null
+  }
+}

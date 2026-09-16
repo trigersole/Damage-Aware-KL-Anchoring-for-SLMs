@@ -1,0 +1,910 @@
+Absolutely. Ignoring your background entirely, I'd optimize for topics that are:
+
+* **scientifically framed**, not just “we fine-tuned an LLM”
+* feasible for a **3–6 person team**
+* have public datasets and clear baselines
+* allow a small but meaningful novelty
+* produce strong quantitative results within one semester
+
+Here are project ideas grouped by direction.
+
+---
+
+# 1. Fine-tuning / LoRA / PEFT Ideas
+
+### 1. When Does LoRA Fail? Understanding Rank Allocation Across Layers
+
+**Research question:** Is uniform LoRA rank allocation across all transformer layers optimal?
+
+Idea:
+
+* Standard LoRA uses the same rank everywhere.
+* Investigate adaptive allocation:
+
+  * higher rank in attention layers
+  * higher rank in MLP layers
+  * rank based on gradient importance
+  * rank based on activation statistics
+
+Compare:
+
+* Full fine-tuning
+* Standard LoRA
+* AdaLoRA
+* Your adaptive rank strategy
+
+**Datasets:** GLUE, SuperGLUE, GSM8K or domain-specific QA.
+
+**Why interesting:** Goes beyond simply applying LoRA and asks a fundamental efficiency question.
+
+**Novelty potential:** High enough for a course project.
+
+---
+
+### 2. Can Small LLMs Learn Better Through Layer-Selective Fine-Tuning?
+
+Instead of adapting every layer, investigate:
+
+> Which layers actually need adaptation for different tasks?
+
+Experiments:
+
+* Fine-tune only early layers
+* Only middle layers
+* Only later layers
+* Different combinations
+
+Measure:
+
+* Performance
+* Trainable parameters
+* Training time
+* Memory
+
+**Scientific question:**
+
+> Does task complexity determine where adaptation should occur in an LLM?
+
+This is simple but can produce a surprisingly strong analysis paper.
+
+---
+
+### 3. LoRA Initialization Strategies
+
+Most people use standard initialization without thinking much about it.
+
+Investigate whether better initialization can improve:
+
+* convergence speed
+* low-rank adaptation quality
+* stability under very low ranks
+
+Compare:
+
+* Random initialization
+* SVD-based initialization
+* Activation-aware initialization
+* Gradient-informed initialization
+
+Potentially propose a lightweight initialization technique.
+
+---
+
+# 2. Mixture of Experts (MoE)
+
+### 4. Can You Build Task-Specialized Experts Using LoRA?
+
+This is a particularly nice project concept.
+
+Instead of training a massive MoE:
+
+1. Start with one base LLM.
+2. Train multiple LoRA adapters as "experts":
+
+   * reasoning expert
+   * coding expert
+   * summarization expert
+   * mathematical expert
+3. Train/design a router.
+4. Route each input to the appropriate LoRA expert.
+
+Research question:
+
+> Can parameter-efficient LoRA experts approximate the benefits of mixture-of-experts architectures?
+
+Compare:
+
+* Base model
+* Single general LoRA
+* Random expert routing
+* Oracle routing
+* Learned routing
+
+This is feasible without training a huge MoE from scratch.
+
+---
+
+### 5. Soft vs Hard Routing for LoRA Experts
+
+Build several domain/task-specific adapters.
+
+Compare:
+
+**Hard routing**
+
+```
+Input → Router → Expert 3
+```
+
+vs
+
+**Soft routing**
+
+```
+Input → Router → 0.2 Expert 1 + 0.7 Expert 2 + 0.1 Expert 3
+```
+
+Research questions:
+
+* Does soft routing improve generalization?
+* How many experts are actually useful?
+* What happens for ambiguous inputs?
+
+Nice combination of:
+
+* MoE
+* PEFT
+* routing
+* efficiency
+
+---
+
+### 6. Router Collapse in Small MoE Systems
+
+MoE routers sometimes route too many samples to a few experts.
+
+Investigate:
+
+> How effective are different load-balancing strategies in preventing expert collapse?
+
+Experiment with:
+
+* auxiliary load balancing loss
+* entropy regularization
+* noisy routing
+* temperature scaling
+
+Metrics:
+
+* task accuracy
+* expert utilization entropy
+* load imbalance
+* inference cost
+
+This is more research-oriented.
+
+---
+
+# 3. Reasoning and LLM Behavior
+
+### 7. Does Chain-of-Thought Actually Help Small Models?
+
+Don't just compare:
+
+> CoT vs No-CoT
+
+Instead investigate **when** it helps.
+
+Categorize problems by:
+
+* reasoning depth
+* number of steps
+* problem type
+* ambiguity
+
+Research question:
+
+> At what complexity threshold does explicit reasoning become beneficial?
+
+Datasets:
+
+* GSM8K
+* StrategyQA
+* CommonsenseQA
+* BBH
+
+Metrics:
+
+* accuracy
+* token cost
+* latency
+
+Could produce interesting plots and insights.
+
+---
+
+### 8. Self-Consistency vs Compute Budget
+
+Self-consistency generates multiple reasoning paths.
+
+Question:
+
+> Given a fixed inference budget, is it better to use a larger model once or a smaller model multiple times?
+
+For example:
+
+```
+Large model × 1 sample
+vs
+Small model × 5 samples
+vs
+Small model × 10 samples + voting
+```
+
+Measure:
+
+* accuracy
+* tokens
+* latency
+* cost
+
+Very clean experimental research question.
+
+---
+
+### 9. Can an LLM Know When It Is Wrong?
+
+Investigate model confidence.
+
+Approaches:
+
+* Token probability
+* Self-reported confidence
+* Multiple sampling agreement
+* Semantic entropy
+
+Research question:
+
+> Which uncertainty estimation method best predicts incorrect LLM answers?
+
+Tasks:
+
+* QA
+* mathematical reasoning
+* factual questions
+
+Metrics:
+
+* AUROC
+* Expected Calibration Error
+* Brier Score
+
+This is a strong scientific project.
+
+---
+
+# 4. Hallucination
+
+### 10. Detecting Hallucinations Without External Knowledge
+
+Instead of RAG, ask:
+
+> Can we detect hallucinations using only the model's internal generation behavior?
+
+Possible signals:
+
+* token entropy
+* disagreement across samples
+* hidden-state similarity
+* contradiction between generated answers
+* attention patterns
+
+Compare with:
+
+* self-consistency
+* external fact verification
+* existing hallucination detection methods
+
+Datasets:
+
+* TruthfulQA
+* HaluEval
+
+This has a clear evaluation setup.
+
+---
+
+### 11. Adaptive Retrieval for RAG
+
+Most RAG systems retrieve for **every query**.
+
+But many queries don't need retrieval.
+
+Build:
+
+```text
+Query
+  ↓
+Need Retrieval?
+ ↙️          ↘️
+No           Yes
+↓             ↓
+LLM          Retriever → LLM
+```
+
+Research question:
+
+> Can adaptive retrieval reduce cost and hallucination without hurting answer quality?
+
+Methods for deciding retrieval:
+
+* model confidence
+* query classification
+* entropy
+* small routing classifier
+
+Metrics:
+
+* accuracy
+* hallucination rate
+* retrieval frequency
+* latency
+
+Very practical and publishable-style.
+
+---
+
+# 5. RAG Ideas
+
+### 12. Does Better Retrieval Always Mean Better Generation?
+
+A very interesting question.
+
+Experiment with retrieval quality:
+
+```
+Perfect retrieval
+High-quality retrieval
+Moderate retrieval
+Noisy retrieval
+Contradictory retrieval
+```
+
+Then measure generation quality.
+
+Research question:
+
+> How robust are LLMs to imperfect or conflicting retrieved information?
+
+Datasets:
+
+* Natural Questions
+* HotpotQA
+* MuSiQue
+
+Metrics:
+
+* Recall@K
+* EM/F1
+* answer faithfulness
+
+This allows a very systematic study.
+
+---
+
+### 13. Query-Adaptive Chunking for RAG
+
+Standard RAG chunks documents into fixed sizes:
+
+```
+512 tokens
+1024 tokens
+2048 tokens
+```
+
+Instead:
+
+> Can chunk size dynamically depend on query complexity?
+
+Example:
+
+* Simple factual query → small chunk
+* Multi-hop question → larger context
+* Broad conceptual query → multiple chunks
+
+Compare against fixed chunking.
+
+This has practical novelty and manageable implementation complexity.
+
+---
+
+### 14. Reranking vs More Retrieval
+
+Question:
+
+> With a fixed computational budget, should we retrieve more documents or retrieve fewer and rerank them?
+
+Compare:
+
+```text
+Top 5 retrieval
+Top 20 retrieval
+Top 50 retrieval
+
+vs
+
+Top 50 → Reranker → Top 5
+```
+
+Measure:
+
+* retrieval quality
+* answer quality
+* latency
+
+Simple but rigorous.
+
+---
+
+# 6. Long Context
+
+### 15. Lost in the Middle: Can We Fix It With Context Reordering?
+
+LLMs often struggle to use information placed in the middle of a long context.
+
+Investigate strategies:
+
+* Original order
+* Relevance-based ordering
+* Put important information first
+* Duplicate critical evidence
+* Query-aware reordering
+
+Research question:
+
+> Can simple context organization strategies improve long-context reasoning without model modification?
+
+Datasets:
+
+* LongBench
+* Needle-in-a-Haystack variants
+
+Very feasible.
+
+---
+
+### 16. Context Compression vs Answer Accuracy
+
+Long context is expensive.
+
+Compare:
+
+* Full context
+* Extractive compression
+* LLM summarization
+* Query-aware compression
+
+Question:
+
+> How much context can we remove before performance significantly degrades?
+
+Plot:
+
+```text
+Context Length
+      vs
+Answer Accuracy
+```
+
+Could produce a very clean experimental study.
+
+---
+
+# 7. Small Language Models
+
+### 17. Can Small Models Compete Through Better Inference Strategies?
+
+Instead of improving the model, improve inference.
+
+Compare:
+
+* greedy decoding
+* beam search
+* self-consistency
+* verifier-based selection
+* iterative refinement
+
+Question:
+
+> Can inference-time computation compensate for model scale?
+
+Compare models of different sizes under equal compute budgets.
+
+This is a very relevant research direction.
+
+---
+
+### 18. Teacher–Student Distillation With Difficulty-Aware Data
+
+Standard knowledge distillation treats examples equally.
+
+Idea:
+
+1. Use a large teacher.
+2. Estimate example difficulty.
+3. Train a smaller student with a curriculum:
+
+   * easy → medium → difficult
+
+Compare:
+
+* Random ordering
+* Easy-to-hard curriculum
+* Hard-example emphasis
+
+Question:
+
+> Does difficulty-aware distillation improve small LLM reasoning?
+
+---
+
+# 8. Synthetic Data
+
+### 19. Quality vs Quantity of Synthetic Data
+
+A classic but still interesting question.
+
+Generate datasets with an LLM.
+
+Compare:
+
+```text
+10K high-quality examples
+50K moderate-quality examples
+100K noisy examples
+```
+
+Then fine-tune the same model.
+
+Question:
+
+> Is synthetic data quality more important than quantity?
+
+You can also investigate filtering methods:
+
+* perplexity
+* self-consistency
+* LLM-as-a-judge
+* diversity filtering
+
+---
+
+### 20. Can Synthetic Data Improve a Model Outside Its Generation Domain?
+
+Example:
+
+* Generate math reasoning data
+* Fine-tune model
+* Evaluate on:
+
+  * logical reasoning
+  * commonsense
+  * symbolic tasks
+
+Question:
+
+> Does domain-specific synthetic training transfer to other reasoning abilities?
+
+This investigates generalization rather than raw benchmark improvement.
+
+---
+
+# 9. Agents
+
+### 21. When Should an LLM Agent Stop Thinking?
+
+Agent systems often loop unnecessarily.
+
+Research question:
+
+> Can we predict when additional reasoning/tool calls are unlikely to improve an answer?
+
+Create adaptive stopping mechanisms based on:
+
+* confidence
+* answer stability
+* tool result similarity
+* entropy
+
+Compare:
+
+* fixed number of steps
+* maximum budget
+* adaptive stopping
+
+Metrics:
+
+* success rate
+* average steps
+* token cost
+
+Very relevant to agentic AI.
+
+---
+
+### 22. Tool Selection Under Limited Budget
+
+Give an LLM access to multiple tools:
+
+* calculator
+* retrieval
+* code execution
+* search/database
+
+But impose a budget.
+
+Question:
+
+> How should an agent allocate limited tool calls?
+
+Compare:
+
+* random
+* fixed policies
+* LLM-based selection
+* learned router
+
+Measure:
+
+* task success
+* number of calls
+* cost
+
+---
+
+# 10. Multimodal LLM Ideas
+
+### 23. Does Image Resolution Actually Matter for Vision-Language Models?
+
+Evaluate VLM performance under:
+
+* 224×224
+* 448×448
+* 768×768
+
+Across:
+
+* OCR
+* charts
+* scene understanding
+* spatial reasoning
+
+Question:
+
+> Which visual tasks actually benefit from higher resolution?
+
+Measure accuracy vs computational cost.
+
+Very clean experimental project.
+
+---
+
+### 24. Text vs Image Reasoning for Charts and Tables
+
+Give models information in two formats:
+
+**Format A**
+
+```
+Raw table/text
+```
+
+**Format B**
+
+```
+Image/chart
+```
+
+Question:
+
+> Which representation enables better reasoning for different task types?
+
+Could investigate:
+
+* numerical reasoning
+* trend detection
+* comparisons
+* anomaly detection
+
+---
+
+# 11. LLM Efficiency Ideas
+
+### 25. Quantization-Aware LoRA Fine-Tuning
+
+Investigate:
+
+> How much adaptation quality is lost when fine-tuning aggressively quantized models?
+
+Compare:
+
+| Base precision  | Fine-tuning |
+| --------------- | ----------- |
+| FP16            | LoRA        |
+| INT8            | LoRA        |
+| INT4            | QLoRA       |
+| Mixed precision | Adaptive    |
+
+Metrics:
+
+* accuracy
+* memory
+* training speed
+* inference latency
+
+Possible extension: selectively preserve sensitive layers at higher precision.
+
+---
+
+### 26. Which Layers Are Most Sensitive to Quantization?
+
+This is a beautiful scientific question.
+
+Experiment:
+
+```text
+Quantize all layers → baseline
+
+Then selectively:
+- keep embeddings high precision
+- keep attention high precision
+- keep MLP high precision
+- keep final layers high precision
+```
+
+Question:
+
+> Where should precision be allocated under a strict memory budget?
+
+Potential output:
+
+```text
+Memory Budget → Optimal Precision Allocation
+```
+
+Could potentially combine this with LoRA.
+
+---
+
+# 12. More Unusual Ideas
+
+### 27. Can LLMs Detect Their Own Knowledge Boundary?
+
+Ask models questions from:
+
+* training-like/common domains
+* niche domains
+* obscure facts
+* deliberately impossible questions
+
+Measure whether uncertainty correlates with correctness.
+
+Then investigate:
+
+> Can we train a lightweight abstention mechanism that makes LLMs say "I don't know" more appropriately?
+
+Very useful and scientifically clean.
+
+---
+
+### 28. Forgetting During Sequential LoRA Fine-Tuning
+
+Train adapters sequentially:
+
+```text
+Task A → Task B → Task C
+```
+
+Measure catastrophic forgetting.
+
+Investigate:
+
+* merging adapters
+* freezing important components
+* orthogonal LoRA updates
+* replay
+
+Research question:
+
+> How severe is catastrophic forgetting in parameter-efficient sequential adaptation?
+
+This is a strong topic.
+
+---
+
+### 29. LoRA Adapter Composition
+
+Train adapters independently:
+
+```text
+Math Adapter
+Coding Adapter
+Reasoning Adapter
+```
+
+Then investigate whether they can be combined:
+
+```text
+W = W₀ + αA + βB + γC
+```
+
+Questions:
+
+* Does linear adapter merging work?
+* When do adapters interfere?
+* Can a router learn optimal mixing weights?
+
+This is one of my favorite project directions.
+
+---
+
+### 30. Benchmark Contamination Detection
+
+Investigate whether LLM performance on popular benchmarks reflects memorization.
+
+Compare:
+
+* Original benchmark
+* Paraphrased version
+* Newly generated equivalent questions
+
+Question:
+
+> How robust is benchmark performance to semantic-preserving changes?
+
+Metrics:
+
+* performance drop
+* consistency
+* paraphrase robustness
+
+This is highly relevant to modern LLM evaluation.
+
+---
+
+# My top 10 picks
+
+If I were choosing topics based purely on **research potential + feasibility + ability to make a convincing proposal**, I'd shortlist:
+
+| Rank | Topic                                     | Difficulty  | Research potential |
+| ---- | ----------------------------------------- | ----------- | ------------------ |
+| 1    | LoRA Adapter Composition                  | Medium      | ⭐⭐⭐⭐⭐              |
+| 2    | Adaptive Retrieval for RAG                | Medium      | ⭐⭐⭐⭐⭐              |
+| 3    | Task-Specialized LoRA MoE                 | Medium–High | ⭐⭐⭐⭐⭐              |
+| 4    | LLM Uncertainty / Knowing When Wrong      | Medium      | ⭐⭐⭐⭐⭐              |
+| 5    | Context Compression vs Accuracy           | Medium      | ⭐⭐⭐⭐               |
+| 6    | Layer-wise Quantization Sensitivity       | Medium      | ⭐⭐⭐⭐⭐              |
+| 7    | Difficulty-Aware Distillation             | High        | ⭐⭐⭐⭐⭐              |
+| 8    | Lost-in-the-Middle Context Reordering     | Medium      | ⭐⭐⭐⭐               |
+| 9    | Adaptive Agent Stopping                   | High        | ⭐⭐⭐⭐⭐              |
+| 10   | Sequential LoRA & Catastrophic Forgetting | Medium      | ⭐⭐⭐⭐⭐              |
+
+## One important recommendation
+
+For this kind of course proposal, **don't chase novelty for novelty's sake**. The strongest projects usually have this structure:
+
+> **Clear scientific question → simple hypothesis → controlled experimental setup → strong baselines → quantitative analysis → small proposed improvement**
+
+For example, this is much stronger than *"We will build an MoE LLM"*:
+
+> **"Can task-specialized LoRA adapters combined through learned routing achieve better multi-task performance than a single LoRA adapter under an equivalent parameter budget?"**
+
+That single sentence already gives you:
+
+* objective
+* hypothesis
+* baselines
+* methodology
+* evaluation direction
+
+If you want, I can next give you **10 project ideas specifically at the intersection of LoRA + MoE + LLM efficiency**, ranging from **safe course-project ideas to genuinely research-paper-like ideas**.

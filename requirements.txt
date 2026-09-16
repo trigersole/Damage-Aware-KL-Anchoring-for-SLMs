@@ -1,0 +1,14 @@
+# Direct dependencies for Team G4's training, selection, evaluation and plots.
+# Use `uv sync --locked` with the committed uv.lock for exact transitive versions.
+# The optional CUDA quantization extra is installed with `uv sync --locked --extra cuda-quantized`.
+# Python: 3.11 or 3.12. CPU-only smoke tests do not require a GPU.
+-e .
+accelerate>=1.4,<2
+datasets>=3.6,<5
+matplotlib>=3.8,<4
+numpy>=1.26,<3
+peft>=0.15,<1
+safetensors>=0.5,<1
+sentence-transformers>=4,<7
+torch>=2.5,<3
+transformers>=4.57,<5

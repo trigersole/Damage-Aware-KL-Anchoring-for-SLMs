@@ -1,0 +1,154 @@
+I think we can convert our LoRA comparison into a more focused research project:
+
+## Proposed title
+
+**Do Orthogonal LoRA Methods Protect Knowledge or Block Transfer? A Target-Matched Study of Task Similarity and Order**
+
+### Motivation
+
+Our current proposal compares standard LoRA, O-LoRA, CURLoRA and OPLoRA to determine which method reduces catastrophic forgetting.
+
+However, simply comparing their final accuracies would mainly be a benchmarking or reproduction study because all these methods already exist.
+
+A more interesting research question is:
+
+> **Does orthogonality always protect knowledge, or can it also block useful transfer between related tasks?**
+
+Different methods make different assumptions:
+
+- **O-LoRA** assumes forgetting happens because updates for new tasks interfere with the update directions used by previous tasks.
+- **OPLoRA** assumes forgetting happens when fine-tuning modifies dominant directions of the pretrained model.
+- **CURLoRA** assumes more restricted and structured low-rank updates provide greater stability.
+- **Standard LoRA** does not explicitly protect previous tasks or pretrained directions.
+
+### Main research idea
+
+We will sequentially fine-tune the same model on multiple tasks:
+
+```text
+Base model → Task 1 → Task 2 → Task 3 → Task 4
+```
+
+The important experimental variable will be the relationship between consecutive tasks.
+
+We will construct two or more orders using the same tasks:
+
+```text
+Order A: similar or related tasks appear consecutively
+Order B: dissimilar tasks appear consecutively
+```
+
+For example, sentiment analysis followed by emotion classification may allow useful transfer because the tasks rely on related language features. In contrast, sentiment analysis followed by mathematical reasoning may create more interference.
+
+This allows us to test whether orthogonal methods behave differently depending on task similarity.
+
+### Why orthogonality might help
+
+When two tasks are unrelated, their updates may interfere destructively.
+
+O-LoRA attempts to place the new task’s update in a direction orthogonal to previous task updates. This may protect earlier tasks from being overwritten.
+
+OPLoRA similarly prevents updates from entering dominant pretrained directions. This may protect the model’s general capabilities.
+
+Therefore, orthogonality may be especially useful for unrelated or conflicting tasks.
+
+### Why orthogonality might hurt
+
+Related tasks may benefit from using shared representations.
+
+For example, sentiment and emotion classification may both depend on understanding subjective and emotional language. If we force their updates to be completely separate, the second task may not reuse useful information learned from the first task.
+
+Therefore:
+
+> A mechanism that reduces interference may also reduce positive transfer.
+
+The project will investigate this stability–transfer trade-off.
+
+### Methods to compare
+
+Our principal methods can be:
+
+1. Standard LoRA
+2. O-LoRA
+3. OPLoRA
+4. CURLoRA
+5. Standard LoRA with random replay
+
+Full fine-tuning can be included only if the selected model is sufficiently small and compute permits it.
+
+Random replay is important because we should determine whether complicated geometric methods actually outperform a simple established baseline.
+
+### Target-matched comparison
+
+A major control in our study will be **target matching**.
+
+We should not conclude that a method forgets less if it simply learns the new task less effectively.
+
+For example:
+
+```text
+Method          New-task accuracy    Old-task forgetting
+LoRA                   75%                  12%
+O-LoRA                 61%                   4%
+```
+
+O-LoRA appears to forget less, but the comparison is unfair because it learned much less.
+
+Instead, we will compare checkpoints where the methods have approximately equal new-task performance, such as within ±1–2 percentage points.
+
+We will also keep training data, training tokens, LoRA rank and model architecture as consistent as possible.
+
+### Evaluation
+
+After learning every task, we will evaluate:
+
+- Performance on the current task
+- Performance on all previous tasks
+- Average accuracy across learned tasks
+- Average forgetting
+- Backward transfer
+- Positive forward transfer between related tasks
+- General capability retention using benchmarks such as MMLU or ARC
+- Trainable parameters, total stored parameters, memory and training time
+
+The main result will be a stability–plasticity plot showing:
+
+```text
+New-task learning ↔ Previous-task retention
+```
+
+We can also compare performance separately for similar and dissimilar task transitions.
+
+### Hypotheses
+
+Our main hypotheses are:
+
+- Orthogonal methods will reduce forgetting more strongly for dissimilar tasks.
+- Strong orthogonality may reduce beneficial transfer between similar tasks.
+- O-LoRA will be better at protecting previously learned tasks.
+- OPLoRA will be better at protecting general pretrained capabilities.
+- Method rankings will change when task order changes.
+- Some reported forgetting advantages will become smaller after matching new-task performance.
+- Random replay may remain competitive with more complicated methods.
+
+### Research contribution
+
+We are not claiming to invent O-LoRA, OPLoRA or CURLoRA.
+
+Our contribution would be:
+
+> **A unified and target-matched investigation of when different LoRA protection mechanisms help, when they block useful transfer, and how their results depend on task similarity and order.**
+
+This is stronger than simply reporting which method achieved the highest accuracy because it attempts to explain the conditions under which each mechanism succeeds or fails.
+
+Recent work has already considered similarity-aware orthogonality, so we should not claim that task similarity itself is completely unexplored. Our novelty claim should instead be the controlled comparison across multiple mechanisms, task orders, target-matched checkpoints and separate measurements of previous-task versus general-capability forgetting.
+
+### Feasibility
+
+We can use a 0.5B–1.5B open model and approximately four sequential tasks.
+
+With four or five main methods, two task orders and two seeds, the experiment would require roughly 16–20 main task-sequence runs. Evaluation after each task does not require additional training.
+
+This should be manageable for a team of 3–4 students over eight weeks if we first establish a reliable standard-LoRA baseline and then add the specialised methods one at a time.
+
+Even a negative result would be meaningful. For example, if task similarity does not affect the methods or if random replay performs equally well, that would still challenge the assumption that complicated orthogonal constraints are necessary.

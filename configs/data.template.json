@@ -1,0 +1,42 @@
+{
+  "gsm8k": {
+    "train_source": {"path": "openai/gsm8k", "name": "main", "revision": null, "split": "train"},
+    "test_source": {"path": "openai/gsm8k", "name": "main", "revision": null, "split": "test"},
+    "question_column": "question",
+    "answer_column": "answer",
+    "validation_count": null,
+    "split_seed": null
+  },
+  "retention": {
+    "boolq": {
+      "source": {"path": "google/boolq", "name": "default", "revision": null, "split": "validation"},
+      "columns": {"question": "question", "passage": "passage"}
+    },
+    "hellaswag": {
+      "source": {"path": "Rowan/hellaswag", "name": "default", "revision": null, "split": "validation"},
+      "columns": {"context": "ctx", "choices": "endings"}
+    },
+    "arc_easy": {
+      "source": {"path": "allenai/ai2_arc", "name": "ARC-Easy", "revision": null, "split": "test"},
+      "columns": {"question": "question", "choices": "choices"}
+    }
+  },
+  "anchors": {
+    "source": {"path": null, "name": null, "revision": null, "split": null},
+    "prompt_column": null,
+    "context_column": null,
+    "context_template": null
+  },
+  "overlap": {
+    "ngram_size": null,
+    "min_shared_ngrams": null,
+    "min_containment": null
+  },
+  "candidate_filters": {
+    "review_completed": null,
+    "max_characters": null,
+    "target_like_patterns": null,
+    "unsafe_patterns": null,
+    "manual_exclusions": {}
+  }
+}
