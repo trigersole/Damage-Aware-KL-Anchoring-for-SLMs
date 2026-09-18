@@ -1,0 +1,89 @@
+{
+  "gsm8k": {
+    "train_source": {
+      "path": "openai/gsm8k",
+      "name": "main",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "split": "train"
+    },
+    "test_source": {
+      "path": "openai/gsm8k",
+      "name": "main",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "split": "test"
+    },
+    "question_column": "question",
+    "answer_column": "answer",
+    "validation_count": 100,
+    "split_seed": 42
+  },
+  "retention": {
+    "boolq": {
+      "source": {
+        "path": "google/boolq",
+        "name": "default",
+        "revision": "35b264d03638db9f4ce671b711558bf7ff0f80d5",
+        "split": "validation"
+      },
+      "columns": {
+        "question": "question",
+        "passage": "passage"
+      }
+    },
+    "hellaswag": {
+      "source": {
+        "path": "Rowan/hellaswag",
+        "name": "default",
+        "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+        "split": "validation"
+      },
+      "columns": {
+        "context": "ctx",
+        "choices": "endings"
+      }
+    },
+    "arc_easy": {
+      "source": {
+        "path": "allenai/ai2_arc",
+        "name": "ARC-Easy",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "split": "test"
+      },
+      "columns": {
+        "question": "question",
+        "choices": "choices"
+      }
+    }
+  },
+  "anchors": {
+    "source": {
+      "path": "databricks/databricks-dolly-15k",
+      "name": "default",
+      "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+      "split": "train"
+    },
+    "prompt_column": "instruction",
+    "context_column": "context",
+    "context_template": "Context:\n{context}\n\nInstruction:\n{prompt}"
+  },
+  "overlap": {
+    "ngram_size": 5,
+    "min_shared_ngrams": 2,
+    "min_containment": 0.5
+  },
+  "candidate_filters": {
+    "review_completed": true,
+    "max_characters": 4096,
+    "target_like_patterns": [
+      "\\bgsm8k\\b",
+      "\\bgrade[- ]school math\\b",
+      "####\\s*[-+]?\\d",
+      "\\b(calculate|compute|solve)\\b.{0,80}\\b(sum|difference|product|quotient|percentage|percent)\\b"
+    ],
+    "unsafe_patterns": [
+      "\\b(suicide|self[- ]harm)\\b",
+      "\\b(build|make|create)\\b.{0,60}\\b(bomb|explosive|weapon|poison)\\b"
+    ],
+    "manual_exclusions": {}
+  }
+}

@@ -7,6 +7,7 @@ data/processed/
 data/downloads/
 results/runs/
 artifacts/
+logs/
 *.safetensors
 *.bin
 *.pt

@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "condition": "final",
+  "experiment_id": "exploratory-01-lora",
+  "output_directory": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs",
+  "model": {
+    "repository_id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+  },
+  "datasets": {
+    "gsm8k": {
+      "repository_id": "openai/gsm8k",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "configuration": "main",
+      "split": "train",
+      "preprocessing": "Raw GSM8K question and answer; 100-example deterministic validation carve-out from train with seed 42",
+      "validation_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/exploratory-01/gsm8k_validation.jsonl",
+      "test_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/exploratory-01/gsm8k_test.jsonl"
+    },
+    "boolq": {
+      "repository_id": "google/boolq",
+      "revision": "35b264d03638db9f4ce671b711558bf7ff0f80d5",
+      "configuration": "default",
+      "split": "validation",
+      "preprocessing": "Unmodified passage, question and boolean answer"
+    },
+    "hellaswag": {
+      "repository_id": "Rowan/hellaswag",
+      "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+      "configuration": "default",
+      "split": "validation",
+      "preprocessing": "Unmodified ctx, endings and label"
+    },
+    "arc_easy": {
+      "repository_id": "allenai/ai2_arc",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "configuration": "ARC-Easy",
+      "split": "test",
+      "preprocessing": "Unmodified question, choices and answerKey"
+    },
+    "anchors": {
+      "repository_id": "databricks/databricks-dolly-15k",
+      "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+      "configuration": "default",
+      "split": "train",
+      "preprocessing": "Instruction with optional context; surface-overlap and configured regex filtering",
+      "eligible_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/exploratory-01/eligible_anchors.jsonl",
+      "exclusions_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/exploratory-01/excluded_anchors.jsonl"
+    }
+  },
+  "seed": 42,
+  "lora": {
+    "rank": 8,
+    "alpha": 16,
+    "dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "precision": "fp16",
+    "quantization": "none"
+  },
+  "training": {
+    "training_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/exploratory-01/gsm8k_train.jsonl",
+    "optimizer": "adamw",
+    "learning_rate": 0.0002,
+    "scheduler": "linear",
+    "warmup_steps": 0,
+    "batch_policy": "shuffled_repeat",
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "max_steps": 20,
+    "epochs": 0.01085,
+    "target_examples": 80,
+    "target_tokens": 81920,
+    "anchor_interleave_every_steps": 0
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "max_sequence_tokens": 1024,
+    "validation_max_new_tokens": 256,
+    "target_system_prompt": "",
+    "anchor_system_prompt": "",
+    "teacher_max_new_tokens": 64,
+    "anchor_tokens_per_update": 0,
+    "checkpoint_every_steps": 10,
+    "max_grad_norm": 1.0,
+    "scale_kl_by_temperature_squared": true,
+    "target_answer_append_eos": true
+  },
+  "anchor_selection": {
+    "method": "none",
+    "token_budget": 0,
+    "damage_weight": null,
+    "candidate_pool_manifest": null,
+    "selected_ids_manifest": null
+  },
+  "kl": {
+    "direction": "teacher_to_student",
+    "temperature": 1.0,
+    "coefficient": 0,
+    "token_mask": "response_tokens",
+    "normalization": "token_mean",
+    "teacher_continuation": null
+  },
+  "evaluation": {
+    "harness": "internal_kl_anchors_v1",
+    "harness_revision": "305aaa134f8456f83252f0d2809fd71d5a918d7a",
+    "chat_template": "Qwen tokenizer chat template at pinned model revision",
+    "model_dtype": "fp16",
+    "model_quantization": "none",
+    "trust_remote_code": false,
+    "tokenizer": {
+      "repo_id": "Qwen/Qwen2.5-1.5B-Instruct",
+      "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "use_fast": true,
+      "add_special_tokens": false
+    },
+    "generation": {
+      "max_new_tokens": 256,
+      "do_sample": false,
+      "num_beams": 1,
+      "skip_special_tokens": true
+    },
+    "few_shot": 0,
+    "checkpoint_selection_rule": "min_validation_loss",
+    "fields": {
+      "gsm8k": {
+        "question": "question",
+        "answer": "answer"
+      },
+      "boolq": {
+        "passage": "passage",
+        "question": "question",
+        "answer": "answer"
+      },
+      "hellaswag": {
+        "context": "ctx",
+        "choices": "endings",
+        "answer": "label"
+      },
+      "arc_easy": {
+        "question": "question",
+        "choices": "choices",
+        "choice_text": "text",
+        "choice_key": "label",
+        "answer": "answerKey"
+      }
+    },
+    "limits": {
+      "gsm8k": 100,
+      "boolq": 100,
+      "hellaswag": 100,
+      "arc_easy": 100
+    },
+    "prompt_templates": {
+      "gsm8k": "Solve the problem step by step. Give the final numerical answer after ####.\n\nQuestion: {question}\nAnswer:",
+      "boolq": "Passage: {passage}\nQuestion: {question}\nAnswer yes or no:",
+      "hellaswag": "{ctx}",
+      "arc_easy": "Question: {question}\nAnswer:"
+    },
+    "scoring": {
+      "gsm8k": {
+        "answer_extraction": "gsm8k_final_number_v1"
+      },
+      "boolq": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": false,
+        "choice_prefix": " ",
+        "choice_texts": [
+          "No",
+          "Yes"
+        ]
+      },
+      "hellaswag": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": false,
+        "choice_prefix": " "
+      },
+      "arc_easy": {
+        "method": "conditional_log_likelihood",
+        "tokenization": "separate_no_special_tokens",
+        "length_normalization": false,
+        "choice_prefix": " "
+      }
+    }
+  },
+  "environment": {
+    "python_version": "3.12.13",
+    "software_versions": "torch=2.11.0+cu128; transformers=4.57.6; datasets=4.8.5; peft=0.21.0; accelerate=1.15.0; sentence-transformers=5.7.0; matplotlib=3.11.2",
+    "hardware": "Slurm-managed NVIDIA GPU with 24 GB VRAM; exact device recorded in Slurm output"
+  }
+}

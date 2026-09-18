@@ -2,6 +2,9 @@
 # Use `uv sync --locked` with the committed uv.lock for exact transitive versions.
 # The optional CUDA quantization extra is installed with `uv sync --locked --extra cuda-quantized`.
 # Python: 3.11 or 3.12. CPU-only smoke tests do not require a GPU.
+# The cluster uses an NVIDIA driver supporting CUDA 12.8.
+# For pip-based installs, use the CUDA 12.8 PyTorch wheel index below.
+-f https://download.pytorch.org/whl/cu128
 -e .
 accelerate>=1.4,<2
 datasets>=3.6,<5
@@ -10,5 +13,5 @@ numpy>=1.26,<3
 peft>=0.15,<1
 safetensors>=0.5,<1
 sentence-transformers>=4,<7
-torch>=2.5,<3
+torch==2.11.0+cu128
 transformers>=4.57,<5
