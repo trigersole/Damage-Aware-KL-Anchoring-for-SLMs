@@ -130,6 +130,11 @@ The combined method averages normalized damage rank and diversity rank according
 uv run --locked python -m kl_anchors.evaluate_study \
   --run-dir results/runs/study-01-damage-seed0
 
+# Final reporting: use every item in each locked labelled benchmark split.
+# This preserves the capped evaluation and writes evaluation_full/ separately.
+uv run --locked python -m kl_anchors.evaluate_study \
+  --run-dir results/runs/study-01-damage-seed0 --full-dataset
+
 # To build a full trade-off curve, evaluate a saved step adapter in a new result folder:
 uv run --locked python -m kl_anchors.evaluate_study \
   --run-dir results/runs/study-01-damage-seed0 --checkpoint step_000100
@@ -143,7 +148,7 @@ uv run --locked python -m kl_anchors.analyze \
   --output-dir results/runs/study-01-analysis
 ```
 
-Evaluation saves per-item predictions and multiple-choice likelihoods plus aggregate accuracy. Analysis refuses incompatible prompts, scoring, model revisions or item IDs, then writes forgetting per benchmark, item loss/gain counts, and target-versus-retention plots. Add `--adapted-run results/runs/<id>/evaluations/step_000100` for every evaluated checkpoint to plot a fuller learning-forgetting curve. Pass a team-approved `--match-tolerance <fraction>` to report comparisons at approximately matched **validation** GSM8K accuracy; absent a match, the analysis reports no matched pair. Report the full checkpoint trade-off and all three benchmark changes. Negative forgetting means improvement. Only these selected benchmarks support the retention claim.
+Evaluation saves per-item predictions and multiple-choice likelihoods plus aggregate accuracy. Use `--full-dataset` for final reporting; the locked denominators are GSM8K 1,319, BoolQ 3,270, HellaSwag 10,042 and ARC-Easy 2,376. Analysis refuses incompatible prompts, scoring, model revisions or item IDs, then writes forgetting per benchmark, item loss/gain counts, and target-versus-retention plots. Add `--adapted-run results/runs/<id>/evaluations/step_000100` for every evaluated checkpoint to plot a fuller learning-forgetting curve. Pass a team-approved `--match-tolerance <fraction>` to report comparisons at approximately matched **validation** GSM8K accuracy; absent a match, the analysis reports no matched pair. Report the full checkpoint trade-off and all three benchmark changes. Negative forgetting means improvement. Only these selected benchmarks support the retention claim.
 
 ## 7. Slurm
 

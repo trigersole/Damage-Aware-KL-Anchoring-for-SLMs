@@ -102,7 +102,11 @@ prepare() {
 }
 
 base() {
-  run_py kl_anchors.evaluate_study --base-protocol "$PROTOCOL" --experiment-id "${RUN_PREFIX}-base"
+  local args=(--base-protocol "$PROTOCOL" --experiment-id "${RUN_PREFIX}-base")
+  if [[ "${FULL_DATASET_EVALUATION:-0}" == "1" ]]; then
+    args+=(--full-dataset)
+  fi
+  run_py kl_anchors.evaluate_study "${args[@]}"
 }
 
 semantic() {
@@ -265,7 +269,11 @@ case "$STAGE" in
     require_run_context
     require_value MODE "set the mode used by the completed training run"
     validate_mode_name "$MODE"
-    run_py kl_anchors.evaluate_study --run-dir "$RESULTS_ROOT/${RUN_PREFIX}-${MODE}"
+    args=(--run-dir "$RESULTS_ROOT/${RUN_PREFIX}-${MODE}")
+    if [[ "${FULL_DATASET_EVALUATION:-0}" == "1" ]]; then
+      args+=(--full-dataset)
+    fi
+    run_py kl_anchors.evaluate_study "${args[@]}"
     ;;
   analyze)
     require_value RESULTS_ROOT "set the absolute results/runs directory"

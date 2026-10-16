@@ -25,6 +25,15 @@ from .provenance import evaluation_code_digest
 TASKS = {"gsm8k": "gsm8k", "boolq": "boolq", "hellaswag": "index_mc", "arc_easy": "key_mc"}
 
 
+def use_full_benchmark_splits(study: dict) -> dict:
+    """Return a copy configured to evaluate every item in each locked split."""
+    full_study = copy.deepcopy(study)
+    for name in TASKS:
+        full_study["evaluation"]["limits"][name] = None
+    full_study["evaluation"]["harness_revision"] = evaluation_code_digest()
+    return full_study
+
+
 def evaluation_from_study_protocol(study: dict, tokenizer, *, adapter_path: Path | None = None) -> dict:
     """Convert one common study protocol into the evaluation backend schema."""
     errors = validate_protocol(study)
@@ -117,6 +126,11 @@ def main() -> None:
     group.add_argument("--run-dir", type=Path, help="Existing final training run; evaluate its best_model adapter")
     parser.add_argument("--experiment-id", help="Required for --base-protocol")
     parser.add_argument("--checkpoint", help="Optional saved step directory name, e.g. step_000100; evaluates that checkpoint instead of best_model")
+    parser.add_argument(
+        "--full-dataset",
+        action="store_true",
+        help="Evaluate every item in the four locked labelled benchmark splits and write separate full-evaluation outputs",
+    )
     args = parser.parse_args()
     if args.base_protocol:
         if not args.experiment_id:
@@ -125,6 +139,8 @@ def main() -> None:
         study["experiment_id"] = args.experiment_id
         study["condition"] = "base"
         study["evaluation"]["checkpoint_selection_rule"] = "untouched"
+        if args.full_dataset:
+            study = use_full_benchmark_splits(study)
         run_dir = reserve_run(study)
         adapter = None
     else:
@@ -135,13 +151,21 @@ def main() -> None:
         adapter = run_dir / "checkpoints" / args.checkpoint if args.checkpoint else run_dir / "best_model"
         if study["condition"] not in ("final", "discovery") or not adapter.is_dir():
             raise ValueError("run directory lacks a completed LoRA best_model")
-    output_dir = run_dir / "evaluations" / args.checkpoint if args.checkpoint else run_dir / "evaluation"
+        if args.full_dataset:
+            study = use_full_benchmark_splits(study)
+    if args.checkpoint:
+        evaluation_root = "evaluations_full" if args.full_dataset else "evaluations"
+        output_dir = run_dir / evaluation_root / args.checkpoint
+    else:
+        output_dir = run_dir / ("evaluation_full" if args.full_dataset else "evaluation")
+    status_name = "evaluation_full_status.json" if args.full_dataset else "evaluation_status.json"
+    status_path = run_dir / status_name
     try:
         aggregate = evaluate_study(study, output_dir, adapter_path=adapter)
     except Exception as exc:
-        (run_dir / "evaluation_status.json").write_text(json.dumps({"status": "failed", "error": str(exc)}, indent=2) + "\n", encoding="utf-8")
+        status_path.write_text(json.dumps({"status": "failed", "error": str(exc)}, indent=2) + "\n", encoding="utf-8")
         raise
-    (run_dir / "evaluation_status.json").write_text(json.dumps({"status": "complete", "output_dir": str(output_dir)}, indent=2) + "\n", encoding="utf-8")
+    status_path.write_text(json.dumps({"status": "complete", "output_dir": str(output_dir)}, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(aggregate["metrics"], indent=2))
 
 

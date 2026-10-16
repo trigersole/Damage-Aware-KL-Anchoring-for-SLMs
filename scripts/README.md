@@ -37,11 +37,24 @@ Evaluate the selected task-only checkpoint:
 sbatch --export=ALL,STAGE=evaluate,MODE=lora scripts/slurm_pipeline.sbatch
 ```
 
+For reported results, evaluate every item in the locked labelled splits. This
+writes `evaluation_full/` and preserves any earlier capped `evaluation/`:
+
+```bash
+sbatch --time=12:00:00 \
+  --export=ALL,STAGE=evaluate,MODE=lora,FULL_DATASET_EVALUATION=1 \
+  scripts/slurm_pipeline.sbatch
+```
+
 Evaluate the untouched base model under the same benchmark protocol:
 
 ```bash
 sbatch --export=ALL,STAGE=base scripts/slurm_pipeline.sbatch
 ```
+
+Use a new `RUN_PREFIX` and `FULL_DATASET_EVALUATION=1` for the matching full
+base evaluation. The four full denominators are GSM8K 1,319, BoolQ 3,270,
+HellaSwag 10,042 and ARC-Easy 2,376.
 
 Add cluster-specific flags when required, for example:
 
@@ -80,6 +93,7 @@ Optional variables:
 | `BEST_METRIC` | Override checkpoint selection with `min_validation_loss` or `max_gsm8k_exact_match`. Do not change this for reported comparisons without approval and a decision-log entry. |
 | `EVALUATE_ALL_CHECKPOINTS` | For `STAGE=all`, defaults to `1`; set to `0` only for an explicitly exploratory run. |
 | `MATCH_TOLERANCE` | Approved validation-accuracy tolerance used by analysis for approximately matched target performance. |
+| `FULL_DATASET_EVALUATION` | Set to `1` to remove all four evaluation caps and write separate full-evaluation outputs. |
 
 Allowed `MODE` values:
 
@@ -105,4 +119,4 @@ sacct -j <job-id> --format=JobID,State,ExitCode,Elapsed
 tail -f "slurm-<job-id>.err"
 ```
 
-Training writes `results/runs/${RUN_PREFIX}-${MODE}/`. Inspect `status.json`, `protocol.json`, `validation_history.jsonl` and `best_model/`. Evaluation adds `evaluation_status.json` and `evaluation/`. Generated datasets, adapters, predictions and Slurm logs are ignored by Git; preserve compact report artifacts separately.
+Training writes `results/runs/${RUN_PREFIX}-${MODE}/`. Inspect `status.json`, `protocol.json`, `validation_history.jsonl` and `best_model/`. Capped evaluation adds `evaluation_status.json` and `evaluation/`; full evaluation adds `evaluation_full_status.json` and `evaluation_full/`. Generated datasets, adapters, predictions and Slurm logs are ignored by Git; preserve compact report artifacts separately.

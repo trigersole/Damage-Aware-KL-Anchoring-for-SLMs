@@ -65,6 +65,15 @@ Add new entries in this format:
 - **Consequences for existing experiments or documents:**
 - **Approved by:**
 
+### 2026-10-17 — Full held-out evaluation for final accuracy reporting
+
+- **Status:** Approved
+- **Decision:** Preserve the deterministic GSM8K split of 7,173 training and 300 validation examples, and keep the official 1,319-example GSM8K test split untouched. For final accuracy reporting, evaluate every labelled item in the locked retention splits: BoolQ validation (3,270), HellaSwag validation (10,042) and ARC-Easy test (2,376). Retain the earlier 100-example outputs as exploratory artifacts rather than overwriting them.
+- **Reason:** The 100-example caps produce one-percentage-point resolution and are too noisy for final target-learning or retention conclusions. Training, checkpoint selection and final testing must remain separate.
+- **Alternatives considered:** Increase each cap to another sample size or resample new subsets. Full labelled splits avoid sampling variance and make paired base-versus-adapted comparisons auditable.
+- **Consequences for existing experiments or documents:** Reuse the completed Study-02 best checkpoint without retraining. Run matching full-split evaluations for both the untouched base and every adapted condition using the locked prompts and likelihood-scoring rules. Do not tune checkpoints or hyperparameters using these final test results.
+- **Approved by:** User, in this task.
+
 ### 2026-10-16 — Larger GSM8K validation carve-out and lower learning rate
 
 - **Status:** Approved

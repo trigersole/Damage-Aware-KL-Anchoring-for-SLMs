@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 
-from kl_anchors.evaluate_study import evaluation_from_study_protocol
+from kl_anchors.evaluate_study import evaluation_from_study_protocol, use_full_benchmark_splits
 from test_protocol import complete_protocol
 
 
@@ -11,6 +11,17 @@ class FakeTokenizer:
 
 
 class EvaluationAdapterTests(unittest.TestCase):
+    def test_full_benchmark_mode_removes_limits_without_mutating_run_protocol(self):
+        with tempfile.TemporaryDirectory() as directory:
+            study = complete_protocol(directory)
+            original_limits = dict(study["evaluation"]["limits"])
+            full_study = use_full_benchmark_splits(study)
+            self.assertEqual(study["evaluation"]["limits"], original_limits)
+            self.assertEqual(
+                full_study["evaluation"]["limits"],
+                {"gsm8k": None, "boolq": None, "hellaswag": None, "arc_easy": None},
+            )
+
     def test_common_protocol_renders_locked_chat_prompts(self):
         with tempfile.TemporaryDirectory() as directory:
             study = complete_protocol(directory)
