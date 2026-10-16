@@ -2,7 +2,7 @@
 
 This file is the authoritative record of agreed design choices and unresolved questions. Update it whenever the team approves a material change.
 
-**Last reviewed:** 2026-09-16
+**Last reviewed:** 2026-10-16
 
 ## Confirmed decisions
 
@@ -64,6 +64,42 @@ Add new entries in this format:
 - **Alternatives considered:**
 - **Consequences for existing experiments or documents:**
 - **Approved by:**
+
+### 2026-10-16 — Larger GSM8K validation carve-out and lower learning rate
+
+- **Status:** Approved
+- **Decision:** Use a deterministic 300-example validation carve-out from the GSM8K training split with seed 42, leaving 7,173 target-training examples. Train all new final comparison conditions with AdamW learning rate `2e-5` for five target-data epochs. With per-device batch size 1 and four target microbatches per optimizer update, use `training.max_steps` 8,970.
+- **Reason:** The 100-example validation loss was considered too noisy for checkpoint guidance, and the earlier `2e-4` task-only run reached its validation-loss minimum near 1.5 epochs before increasingly overfitting. The larger carve-out provides a more stable checkpoint-selection signal, while the lower learning rate tests a slower adaptation trajectory.
+- **Alternatives considered:** Retain 100 validation examples; use 500 validation examples; retain learning rate `2e-4`; or use an intermediate learning rate. The user selected 300 examples and `2e-5`.
+- **Consequences for existing experiments or documents:** Freeze a new prepared-data directory and a new protocol/configuration. Preserve all earlier runs unchanged and label them as belonging to the prior split and optimizer protocol. The new base, task-only, random-anchor, diversity-anchor and vulnerability-anchor comparisons must all use the same 300-example split, `2e-5` learning rate and five-epoch budget. Results from the earlier 100-example/`2e-4` run are not directly interchangeable with this comparison matrix.
+- **Approved by:** User, in this task.
+
+### 2026-09-25 — Five-epoch target-training budget
+
+- **Status:** Approved
+- **Decision:** Run the aligned GSM8K protocol for five target-data epochs. With 7,373 training examples, per-device batch size 1 and four target microbatches per optimizer update, use `training.max_steps` 9,220 and record `training.epochs` as 5.
+- **Reason:** The user requested a longer adaptation run after the one-epoch task-only run showed only a modest validation-loss improvement.
+- **Alternatives considered:** Retain one epoch or change checkpoint selection to validation GSM8K exact match. Checkpoint selection remains unchanged because only the training-duration increase was approved.
+- **Consequences for existing experiments or documents:** Use `configs/protocol.study-01-aligned.json` with a new experiment ID. Preserve the completed one-epoch run unchanged. The five-epoch result is a different training budget and must not be treated as directly matched to one-epoch conditions.
+- **Approved by:** User, in this task.
+
+### 2026-09-24 — Align GSM8K training and evaluation prompts
+
+- **Status:** Superseded
+- **Decision:** Use the raw GSM8K question as the complete user message during both target training and GSM8K generation evaluation. The evaluation template is therefore {question}, with no added solve-step-by-step instruction or Question:/Answer: wrapper.
+- **Reason:** The completed study-01-seed0-lora run trained on raw-question user messages but its evaluation protocol added an instruction and wrapper. Matching the prompts removes this train-evaluation distribution mismatch.
+- **Alternatives considered:** Remove only the first instruction sentence while retaining the Question:/Answer: wrapper; instead, the whole wrapper was removed because retaining it would not make the prompts equal.
+- **Consequences for existing experiments or documents:** Preserve study-01-seed0-lora/protocol.json unchanged. Use configs/protocol.study-01-aligned.json and new experiment IDs for future base evaluation, training, and comparison runs. Results produced with the old and aligned evaluation prompts must be labelled separately and are not directly comparable as one locked-protocol study.
+- **Approved by:** User, in this task.
+
+### 2026-09-24 — Use the full GSM8K instruction consistently
+
+- **Status:** Approved
+- **Decision:** Apply the same full prompt template during target training, validation-loss calculation and GSM8K generation evaluation: instruct the model to solve step by step and put the final numerical answer after `####`, followed by the labelled question and answer fields.
+- **Reason:** This preserves train-evaluation consistency while making the expected reasoning and final-answer format explicit for the instruction-tuned model.
+- **Alternatives considered:** Use the raw question alone in both phases. This was rejected because it leaves the response format implicit even though GSM8K targets end with `####`.
+- **Consequences for existing experiments or documents:** The target-training runner now formats GSM8K questions through the locked evaluation template. Preserve the completed `study-01-seed0-lora` artifacts unchanged; use `configs/protocol.study-01-aligned.json` and new experiment IDs for every new base, task-only and anchored comparison. Previously trained and newly trained conditions must not be mixed in one locked-protocol comparison.
+- **Approved by:** User, in this task.
 
 ### 2026-09-16 — Qwen2.5 model repository
 

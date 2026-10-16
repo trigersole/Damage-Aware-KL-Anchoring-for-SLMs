@@ -6,9 +6,10 @@
 2. `../PROJECT_CONTEXT.md` — complete handover from the planning conversation
 3. `../DECISIONS.md` — authoritative decisions and unresolved questions
 4. `../AGENTS.md` — instructions for future Codex tasks
-5. `IMPLEMENTATION.md` — code stages, `uv` environment, mode flags, checkpoints, evaluation and Slurm
-6. `VS_CODE_AND_NTU_RUNBOOK.md` — where to open the folder, local setup, exploratory Qwen trials and complete NTU workflow
-7. `LOCAL_SMOKE.md` — immediate CPU check in VS Code, with synthetic inputs and all five mode flags
+5. `../scripts/README.md` — current Slurm flags, stage requirements and copy-paste Study-02 commands
+6. `IMPLEMENTATION.md` — code stages, `uv` environment, mode flags, checkpoints, evaluation and Slurm
+7. `VS_CODE_AND_NTU_RUNBOOK.md` — where to open the folder, local setup, exploratory Qwen trials and complete NTU workflow
+8. `LOCAL_SMOKE.md` — immediate CPU check in VS Code, with synthetic inputs and all five mode flags
 
 ## Proposal
 

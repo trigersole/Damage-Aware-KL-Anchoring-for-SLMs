@@ -2,34 +2,22 @@
 #SBATCH --job-name=ai6130-kl-anchors
 #SBATCH --output=slurm-%j.out
 #SBATCH --error=slurm-%j.err
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=06:00:00
 
-# Submit with site-specific resources, for example:
-# sbatch --gres=gpu:1 --cpus-per-task=8 --mem=64G --time=24:00:00 \
-#   --export=ALL,STAGE=all,PROTOCOL=/abs/protocol.json,DATA_CONFIG=/abs/data.json,... \
-#   scripts/slurm_pipeline.sbatch
-# No partition or GPU model is assumed here; NTU cluster details remain unknown.
+# Flag reference and copy-paste commands: scripts/README.md
+# The resource defaults above suit one observed single-condition A40 run. Override
+# them at submission time when the site, stage, or model requires different limits.
+# Run the multi-stage study as separate jobs unless one allocation is known to fit.
 
 set -euo pipefail
 
 cd "${SLURM_SUBMIT_DIR:?submit from the repository root}"
 export TOKENIZERS_PARALLELISM=false
 
-: "${STAGE:?set STAGE to prepare, semantic, base, discovery, cache, score, diversity, merge, train, evaluate, analyze, or all}"
-: "${PROTOCOL:?set PROTOCOL to a completed shared protocol JSON path}"
-: "${DATA_DIR:?set DATA_DIR to a new absolute prepared-data directory}"
-: "${ARTIFACT_DIR:?set ARTIFACT_DIR to an absolute anchor-artifact directory}"
-: "${RESULTS_ROOT:?set RESULTS_ROOT to match protocol.output_directory}"
-: "${RUN_PREFIX:?set RUN_PREFIX to a unique identifier for this study batch}"
-if [[ "$STAGE" == "all" ]]; then
-  : "${DATA_CONFIG:?set DATA_CONFIG}"
-  : "${DISCOVERY_PROTOCOL:?set DISCOVERY_PROTOCOL}"
-  : "${DISCOVERY_STEP:?set DISCOVERY_STEP}"
-  : "${EMBED_MODEL_ID:?set EMBED_MODEL_ID}"
-  : "${EMBED_MODEL_REVISION:?set EMBED_MODEL_REVISION}"
-  : "${SEMANTIC_THRESHOLD:?set SEMANTIC_THRESHOLD}"
-  : "${SEED:?set SEED}"
-  : "${DAMAGE_WEIGHT:?set DAMAGE_WEIGHT}"
-fi
+: "${STAGE:?see scripts/README.md and set STAGE}"
 
 UV_BIN="${UV_BIN:-uv}"
 if ! command -v "$UV_BIN" >/dev/null 2>&1; then
@@ -41,8 +29,18 @@ run_py() {
   "$UV_BIN" run --locked --no-sync python -m "$@"
 }
 
+require_value() {
+  local name="$1"
+  local guidance="$2"
+  if [[ -z "${!name:-}" ]]; then
+    echo "$name is required: $guidance" >&2
+    exit 2
+  fi
+}
+
 validate_paths() {
-  local config_path="${1:-$PROTOCOL}"
+  local config_path="$1"
+  require_value RESULTS_ROOT "set it to the same absolute directory as protocol.output_directory"
   python - "$config_path" "$RESULTS_ROOT" <<'PY'
 import json
 import pathlib
@@ -50,6 +48,51 @@ import sys
 protocol = json.loads(pathlib.Path(sys.argv[1]).read_text())
 if pathlib.Path(protocol["output_directory"]).resolve() != pathlib.Path(sys.argv[2]).resolve():
     raise SystemExit("RESULTS_ROOT must equal protocol.output_directory")
+PY
+}
+
+require_protocol_context() {
+  require_value PROTOCOL "set an absolute path to a complete protocol JSON"
+  validate_paths "$PROTOCOL"
+}
+
+require_run_context() {
+  require_protocol_context
+  require_value RUN_PREFIX "choose a unique experiment prefix; never reuse a completed run ID"
+}
+
+validate_mode_name() {
+  case "$1" in
+    lora|random_kl|diverse_kl|damage_kl|damage_diverse_kl) ;;
+    *) echo "invalid MODE: $1" >&2; exit 2 ;;
+  esac
+}
+
+validate_training_mode_config() {
+  local mode="$1"
+  validate_mode_name "$mode"
+  [[ "$mode" == "lora" ]] && return
+  python - "$PROTOCOL" <<'PY'
+import json
+import pathlib
+import sys
+
+protocol = json.loads(pathlib.Path(sys.argv[1]).read_text())
+checks = {
+    "anchor_selection.token_budget": protocol["anchor_selection"].get("token_budget"),
+    "training.anchor_interleave_every_steps": protocol["training"].get("anchor_interleave_every_steps"),
+    "runtime.anchor_tokens_per_update": protocol["runtime"].get("anchor_tokens_per_update"),
+    "kl.coefficient": protocol["kl"].get("coefficient"),
+}
+invalid = [name for name, value in checks.items() if not isinstance(value, (int, float)) or value <= 0]
+for name, value in (
+    ("anchor_selection.candidate_pool_manifest", protocol["anchor_selection"].get("candidate_pool_manifest")),
+    ("kl.teacher_continuation", protocol["kl"].get("teacher_continuation")),
+):
+    if not isinstance(value, str) or not value or not pathlib.Path(value).is_file():
+        invalid.append(name + " (must name an existing file)")
+if invalid:
+    raise SystemExit("anchored MODE requires a completed anchored protocol: " + ", ".join(invalid))
 PY
 }
 
@@ -118,6 +161,7 @@ merge() {
 
 train_one() {
   local mode="$1"
+  validate_training_mode_config "$mode"
   local args=(--protocol "$PROTOCOL" --condition final --mode "$mode" --experiment-id "${RUN_PREFIX}-${mode}")
   if [[ "$mode" == "damage_diverse_kl" ]]; then
     : "${DAMAGE_WEIGHT:?set a predeclared rank-fusion weight in [0,1]}"
@@ -172,19 +216,75 @@ analyze() {
   run_py kl_anchors.analyze "${args[@]}"
 }
 
-validate_paths
 case "$STAGE" in
-  prepare) prepare ;;
-  semantic) semantic ;;
-  base) base ;;
-  discovery) discovery ;;
-  cache) cache ;;
-  score) score ;;
-  diversity) diversity ;;
-  merge) merge ;;
-  train) : "${MODE:?set MODE for a single training condition}"; train_one "$MODE" ;;
-  evaluate) : "${MODE:?set MODE for a single trained condition}"; run_py kl_anchors.evaluate_study --run-dir "$RESULTS_ROOT/${RUN_PREFIX}-${MODE}" ;;
-  analyze) analyze ;;
-  all) prepare; semantic; base; discovery; cache; score; diversity; merge; train_all; evaluate_all; analyze ;;
+  prepare)
+    require_value DATA_CONFIG "set the absolute data-preparation config path"
+    require_value DATA_DIR "set a new absolute output directory"
+    prepare
+    ;;
+  semantic)
+    require_value DATA_CONFIG "set the absolute data-preparation config path"
+    require_value DATA_DIR "set the prepared-data directory"
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    semantic
+    ;;
+  base)
+    require_run_context
+    base
+    ;;
+  discovery)
+    require_value DISCOVERY_PROTOCOL "set the separately approved discovery protocol"
+    require_value RESULTS_ROOT "set it to the discovery protocol output_directory"
+    require_value RUN_PREFIX "choose a unique study prefix"
+    discovery
+    ;;
+  cache)
+    require_protocol_context
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    cache
+    ;;
+  score)
+    require_run_context
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    score
+    ;;
+  diversity)
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    diversity
+    ;;
+  merge)
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    merge
+    ;;
+  train)
+    require_run_context
+    require_value MODE "use lora, random_kl, diverse_kl, damage_kl, or damage_diverse_kl"
+    train_one "$MODE"
+    ;;
+  evaluate)
+    require_run_context
+    require_value MODE "set the mode used by the completed training run"
+    validate_mode_name "$MODE"
+    run_py kl_anchors.evaluate_study --run-dir "$RESULTS_ROOT/${RUN_PREFIX}-${MODE}"
+    ;;
+  analyze)
+    require_value RESULTS_ROOT "set the absolute results/runs directory"
+    require_value RUN_PREFIX "set the shared study prefix"
+    analyze
+    ;;
+  all)
+    require_run_context
+    require_value DATA_CONFIG "set the absolute data-preparation config path"
+    require_value DATA_DIR "set a new absolute prepared-data directory"
+    require_value ARTIFACT_DIR "set the absolute anchor-artifact directory"
+    require_value DISCOVERY_PROTOCOL "set the separately approved discovery protocol"
+    require_value DISCOVERY_STEP "set the predeclared discovery checkpoint step"
+    require_value EMBED_MODEL_ID "set the pinned embedding-model repository ID"
+    require_value EMBED_MODEL_REVISION "set the immutable embedding-model revision"
+    require_value SEMANTIC_THRESHOLD "set the approved cosine-overlap threshold"
+    require_value SEED "set the locked random seed"
+    require_value DAMAGE_WEIGHT "set the optional combined-selector rank-fusion weight"
+    prepare; semantic; base; discovery; cache; score; diversity; merge; train_all; evaluate_all; analyze
+    ;;
   *) echo "unknown STAGE: $STAGE" >&2; exit 2 ;;
 esac

@@ -24,7 +24,8 @@ The proposed contribution is the **anchor-selection strategy**, not KL regulariz
 
 - **Target task:** GSM8K mathematical reasoning
 - **Retention benchmarks:** BoolQ, HellaSwag and ARC-Easy
-- **Model repository:** `Qwen/Qwen2.5-1.5B-Instruct`; immutable revision remains to be pinned
+- **Model repository:** `Qwen/Qwen2.5-1.5B-Instruct`
+- **Study-02 run revision:** `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`; confirmation as the final comparison revision remains open in `DECISIONS.md`
 - **Adaptation method:** LoRA
 - **Reference model:** Frozen, untouched checkpoint
 
@@ -89,11 +90,11 @@ Suggested first message in the new Codex project:
 
 ## Current status
 
-The topic and core comparison are finalized. A reusable implementation now exists for data preparation, contamination audits, teacher continuation caching, discovery scoring, diversity ranking, five LoRA modes, evaluation, checkpoint selection, and plots. It has synthetic CPU tests; no Qwen training or benchmark result has been reported. Resolve the open items in `DECISIONS.md` and fill the pinned configurations before expensive experiments.
+The topic and core comparison are finalized. A reusable implementation exists for data preparation, contamination audits, teacher continuation caching, discovery scoring, diversity ranking, five LoRA modes, evaluation, checkpoint selection, and plots. A single-seed task-only Qwen2.5-1.5B LoRA run has been completed and evaluated under the Study-02 protocol. The random, diversity and vulnerability-guided anchored conditions have not been run, so the full comparative study is not complete. Resolve the remaining anchored-method choices in `DECISIONS.md` before launching those conditions.
 
 ## Run the code
 
-Start with the [VS Code and NTU runbook](docs/VS_CODE_AND_NTU_RUNBOOK.md) for where to open the folder, a local smoke check, folder layout, and the complete run order. See the [implementation guide](docs/IMPLEMENTATION.md) for configuration fields, all stages, `uv`, and Slurm commands. The training runner changes method with `--mode`:
+For copy-paste `sbatch` commands and a complete environment-variable table, start with the [Slurm launcher README](scripts/README.md). The [VS Code and NTU runbook](docs/VS_CODE_AND_NTU_RUNBOOK.md) covers setup, local smoke checks, folder layout and the complete run order. The [implementation guide](docs/IMPLEMENTATION.md) documents the underlying Python stages and methodology. The training runner changes method with `--mode`:
 
 ```text
 lora  random_kl  diverse_kl  damage_kl  damage_diverse_kl

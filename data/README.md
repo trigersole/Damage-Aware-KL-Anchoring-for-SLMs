@@ -24,3 +24,15 @@ The candidate-anchor pool must remain disjoint from GSM8K validation/test data a
 - [Databricks Dolly 15k](https://huggingface.co/datasets/databricks/databricks-dolly-15k): CC BY-SA 3.0; a possible, **not yet approved**, general instruction pool. If selected, retain attribution and screen its prompts and contexts for benchmark overlap.
 
 Use `python -m kl_anchors.prepare_data --config configs/data.<study>.json --output-dir data/processed/<id>` after pinning full source revisions and filters. It saves stable source IDs, GSM8K train/validation/test manifests, surface-overlap exclusions, and the first eligible anchor pool. Follow with `python -m kl_anchors.semantic_audit` using an explicitly pinned embedding model and threshold. The final eligible pool should be its output. Benchmark labels are not used to rank or select anchors.
+
+## Study-02 target split
+
+`configs/data.study-02.json` freezes the approved seed-42 GSM8K split with 300 validation examples and 7,173 training examples. Reproduce it from the pinned dataset revisions with:
+
+```bash
+uv run --locked python -m kl_anchors.prepare_data \
+  --config configs/data.study-02.json \
+  --output-dir data/processed/study-02
+```
+
+The split uses the same SHA-256 ranking rule and seed as the earlier 100-example carve-out, so those original validation IDs are a subset of the new validation set. The target-training and validation manifests have zero ID overlap. `configs/protocol.study-02.json` records the corresponding five-epoch, `2e-5` task-adaptation settings.

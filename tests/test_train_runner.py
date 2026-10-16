@@ -9,7 +9,7 @@ from unittest.mock import patch
 import torch
 
 from kl_anchors.anchor_pipeline import file_sha256
-from kl_anchors.train import run
+from kl_anchors.train import _target_examples, run
 from test_protocol import complete_protocol
 
 
@@ -45,6 +45,25 @@ class TinyModel(torch.nn.Module):
 
 
 class RunnerTests(unittest.TestCase):
+    def test_target_training_uses_locked_gsm8k_evaluation_template(self):
+        tokenizer = TinyTokenizer()
+        protocol = complete_protocol("unused")
+        protocol["evaluation"]["prompt_templates"]["gsm8k"] = (
+            "Solve step by step. Finish with ####.\n\nQuestion: {question}\nAnswer:"
+        )
+        examples = _target_examples(
+            tokenizer,
+            [{"example_id": "t1", "prompt": "What is 1+1?", "response": "#### 2"}],
+            protocol,
+        )
+        expected_prompt = tokenizer.apply_chat_template(
+            [{"role": "user", "content": "Solve step by step. Finish with ####.\n\nQuestion: What is 1+1?\nAnswer:"}],
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        expected_ids = tokenizer.encode(expected_prompt, add_special_tokens=False)
+        self.assertEqual(examples[0].input_ids[:len(expected_ids)], tuple(expected_ids))
+
     def _base_config(self, root):
         protocol = complete_protocol(str(root / "runs"))
         protocol["training"].update(max_steps=1, warmup_steps=0, per_device_batch_size=1,

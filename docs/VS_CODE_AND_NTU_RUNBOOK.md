@@ -66,18 +66,18 @@ If `uv run --locked python --version` prints 3.14, recreate or reselect the envi
 
 The templates contain `null` values intentionally. A full Qwen run cannot start until the team approves the open choices in `DECISIONS.md`. Do not fill research values just to make validation pass and then report the result as the study.
 
-1. Copy `configs/data.template.json` to a named file such as `configs/data.study-01.json`. Fill the exact dataset commits, a GSM8K train/validation split seed and count, the approved anchor source, prompt columns, overlap thresholds and reviewed filters. Set `candidate_filters.review_completed` to `true` **after** reviewing the source and filter/exclusion list.
-2. Copy `configs/protocol.template.json` to `configs/protocol.study-01.json`. Fill the model's 40-character commit, dataset IDs/revisions/splits, absolute NTU paths, LoRA/optimizer/steps, KL and token budget, prompts/scoring, and hardware/software record. The repository ID is already `Qwen/Qwen2.5-1.5B-Instruct`; its commit remains open. Set the internal evaluator digest as described in `IMPLEMENTATION.md`.
+1. Copy `configs/data.template.json` to a new named file such as `configs/data.study-next.json`. Fill the exact dataset commits, a GSM8K train/validation split seed and count, the approved anchor source, prompt columns, overlap thresholds and reviewed filters. Set `candidate_filters.review_completed` to `true` **after** reviewing the source and filter/exclusion list. `configs/data.study-02.json` is the frozen configuration for the completed task-only study and must not be overwritten.
+2. Copy `configs/protocol.template.json` to `configs/protocol.study-next.json`. Fill the approved model commit, dataset IDs/revisions/splits, absolute NTU paths, LoRA/optimizer/steps, KL and token budget, prompts/scoring, and hardware/software record. Study-02 used Qwen revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`, but its adoption for the final comparison still requires the confirmation recorded as open in `DECISIONS.md`. Set the internal evaluator digest as described in `IMPLEMENTATION.md`. `configs/protocol.study-02.json` records the completed task-only protocol; create a new file for any changed or anchored run.
 3. Make a separate `configs/protocol.discovery-01.json` for the predeclared diagnostic adaptation. A short exploratory trial should have yet another named config and an `exploratory-` output directory or experiment ID.
 4. Check the completed protocol:
 
    ```bash
-   uv run --locked python -m kl_anchors.protocol --config configs/protocol.study-01.json
+   uv run --locked python -m kl_anchors.protocol --config configs/protocol.study-next.json
    ```
 
    The validator lists missing fields. Passing it checks structure, not team approval.
 
-Use **absolute paths on the machine that will execute the run**. A Mac path such as `/Users/...` is not a valid NTU path. For example, `training.training_ids_manifest` must point to the future `data/processed/study-01/gsm8k_train.jsonl` on NTU, `datasets.gsm8k.validation_ids_manifest` to its validation file, `datasets.anchors.eligible_ids_manifest` to the semantic-screened pool, `anchor_selection.candidate_pool_manifest` to the merged scored pool, and `kl.teacher_continuation` to the teacher cache. `output_directory` must equal the Slurm `RESULTS_ROOT` variable.
+Use **absolute paths on the machine that will execute the run**. A Mac path such as `/Users/...` is not a valid NTU path. For example, `training.training_ids_manifest` must point to the new study's `gsm8k_train.jsonl`, `datasets.gsm8k.validation_ids_manifest` to its validation file, `datasets.anchors.eligible_ids_manifest` to the semantic-screened pool, `anchor_selection.candidate_pool_manifest` to the merged scored pool, and `kl.teacher_continuation` to the teacher cache. `output_directory` must equal the Slurm `RESULTS_ROOT` variable.
 
 ## A small **real Qwen** batch
 
@@ -113,26 +113,29 @@ Run stages in this order, using the exact commands in `IMPLEMENTATION.md` or `sc
 | 10 | `evaluate` | Per-item GSM8K, BoolQ, HellaSwag and ARC-Easy results |
 | 11 | `analyze` | Forgetting tables and learning-versus-retention plots |
 
-The Slurm script accepts `STAGE=all` or one stage at a time. Its `STAGE=all` path includes **all five training modes and evaluation of every saved checkpoint by default**. The resource flags in `IMPLEMENTATION.md` are examples, not measured NTU requirements. Use separate jobs when one allocation cannot contain the whole sequence. Submit from the repository root so `SLURM_SUBMIT_DIR` points there.
+The Slurm script accepts `STAGE=all` or one stage at a time. Its `STAGE=all` path includes **all five training modes and evaluation of every saved checkpoint by default**. Use separate jobs unless one allocation is known to contain that workload. Submit from the repository root so `SLURM_SUBMIT_DIR` points there. The authoritative flag table and copy-paste commands are in [`scripts/README.md`](../scripts/README.md).
 
 For example, after filling the protocol with NTU paths, set the variables required by the launcher in the **NTU** terminal and submit one condition:
 
 ```bash
-export PROTOCOL="$PWD/configs/protocol.study-01.json"
-export DATA_DIR="$PWD/data/processed/study-01"
-export ARTIFACT_DIR="$PWD/artifacts/study-01"
+export PROTOCOL="$PWD/configs/protocol.study-02.json"
+export DATA_CONFIG="$PWD/configs/data.study-02.json"
+export DATA_DIR="$PWD/data/processed/study-02"
+export ARTIFACT_DIR="$PWD/artifacts/study-02"
 export RESULTS_ROOT="$PWD/results/runs"     # must equal protocol.output_directory
-export RUN_PREFIX="study-01-seed0"
-sbatch --gres=gpu:1 --export=ALL,STAGE=train,MODE=lora scripts/slurm_pipeline.sbatch
+export RUN_PREFIX="study-02-repro-seed42-01" # must not already exist
+sbatch --gres=gpu:1 --cpus-per-task=8 --mem=32G --time=06:00:00 \
+  --export=ALL,STAGE=train,MODE=lora \
+  scripts/slurm_pipeline.sbatch
 ```
 
-Add NTU's required partition/account, CPU, memory and wall-time flags to `sbatch`; the example does not establish a sufficient allocation. `STAGE=train` expects data and, for anchored modes, the scored pool from earlier stages. Replace `MODE=lora` with another mode to submit its own run. The `DISCOVERY_PROTOCOL`, `DISCOVERY_STEP`, `EMBED_MODEL_ID`, `EMBED_MODEL_REVISION`, `SEMANTIC_THRESHOLD`, `SEED` and `DAMAGE_WEIGHT` variables are additionally required by their corresponding stages or by `STAGE=all`; see the script header and `IMPLEMENTATION.md`.
+Add NTU's required partition/account flags and override the example resources when needed. The shown allocation was sufficient for the observed task-only Qwen2.5-1.5B A40 run; it is not a promise for anchored modes or the full pipeline. `configs/protocol.study-02.json` is task-only and must not be used for anchored modes. The team must first approve the open KL, anchor-budget, discovery and diversity choices and create a new named protocol. See [`scripts/README.md`](../scripts/README.md) for every stage-specific requirement.
 
 Each training condition is switched with one flag:
 
 ```bash
-uv run --locked python -m kl_anchors.train --protocol configs/protocol.study-01.json \
-  --condition final --mode damage_kl --experiment-id study-01-damage-seed0
+uv run --locked python -m kl_anchors.train --protocol configs/protocol.study-02.json \
+  --condition final --mode lora --experiment-id study-02-repro-seed42-01-lora
 ```
 
 Allowed values are `lora`, `random_kl`, `diverse_kl`, `damage_kl`, and `damage_diverse_kl`. The combined mode also needs a predeclared `--damage-weight` or a weight in the protocol. The untouched base is evaluated separately.

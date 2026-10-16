@@ -72,10 +72,15 @@ class TargetStream:
 
 def _target_examples(tokenizer, rows: list[dict], protocol: dict) -> list[TokenizedExample]:
     runtime = protocol["runtime"]
+    prompt_template = protocol["evaluation"]["prompt_templates"]["gsm8k"]
     return [tokenize_completion(
         tokenizer,
         example_id=row["example_id"],
-        rendered_prompt=render_chat_prompt(tokenizer, row["prompt"], runtime["target_system_prompt"]),
+        rendered_prompt=render_chat_prompt(
+            tokenizer,
+            prompt_template.format(question=row["prompt"]),
+            runtime["target_system_prompt"],
+        ),
         response=row["response"],
         max_sequence_tokens=runtime["max_sequence_tokens"],
         append_eos=runtime["target_answer_append_eos"],

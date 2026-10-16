@@ -147,19 +147,25 @@ Evaluation saves per-item predictions and multiple-choice likelihoods plus aggre
 
 ## 7. Slurm
 
-[`scripts/slurm_pipeline.sbatch`](../scripts/slurm_pipeline.sbatch) accepts `STAGE=all` for the full sequence or one stage at a time (`prepare`, `semantic`, `base`, `discovery`, `cache`, `score`, `diversity`, `merge`, `train`, `evaluate`, `analyze`). For a single method set `STAGE=train MODE=damage_kl`. The full sequence evaluates saved checkpoints for the trade-off curve by default; set `EVALUATE_ALL_CHECKPOINTS=0` only for an exploratory run. Set `MATCH_TOLERANCE` after the team fixes its validation matching rule. Install/sync the locked environment on the login node first. Submit from the repository root with NTU-specific resource flags:
+[`scripts/slurm_pipeline.sbatch`](../scripts/slurm_pipeline.sbatch) accepts `STAGE=all` for the full sequence or one stage at a time (`prepare`, `semantic`, `base`, `discovery`, `cache`, `score`, `diversity`, `merge`, `train`, `evaluate`, `analyze`). Its requirements are stage-specific: task-only training and evaluation no longer require irrelevant data-preparation or anchor-artifact variables. The full variable table and copy-paste commands are maintained in [`scripts/README.md`](../scripts/README.md).
+
+For the current task-only Study-02 protocol, export the common paths and submit from the repository root:
 
 ```bash
-sbatch --gres=gpu:1 --cpus-per-task=8 --mem=64G --time=24:00:00 \
-  --export=ALL,STAGE=all,PROTOCOL=/absolute/protocol.study.json,DISCOVERY_PROTOCOL=/absolute/protocol.discovery.json,DATA_CONFIG=/absolute/data.study.json,DATA_DIR=/absolute/data/processed/study-01,ARTIFACT_DIR=/absolute/artifacts/study-01,RESULTS_ROOT=/absolute/results/runs,RUN_PREFIX=study-01,EMBED_MODEL_ID=<repo>,EMBED_MODEL_REVISION=<commit>,SEMANTIC_THRESHOLD=<threshold>,SEED=<seed>,DISCOVERY_STEP=<step>,DAMAGE_WEIGHT=<weight> \
+export PROTOCOL="$PWD/configs/protocol.study-02.json"
+export RESULTS_ROOT="$PWD/results/runs"
+export RUN_PREFIX="study-02-repro-seed42-01"
+
+sbatch --gres=gpu:1 --cpus-per-task=8 --mem=32G --time=06:00:00 \
+  --export=ALL,STAGE=train,MODE=lora \
   scripts/slurm_pipeline.sbatch
 ```
 
-Ask NTU for the actual partition, GPU type/memory, wall-time limit, local storage and CUDA driver before submitting. Keep downloaded datasets, cached models, adapters and large outputs on cluster storage outside version control. Use stage-by-stage jobs with unique experiment IDs if the full sequence exceeds one allocation.
+The observed single-condition run completed on an A40 within this allocation. Ask NTU for the actual partition/account rules and override resources for other hardware or stages. Keep downloaded datasets, cached models, adapters and large outputs on cluster storage outside version control. Use stage-by-stage jobs with unique experiment IDs. Do not launch `STAGE=all` or an anchored `MODE` with `protocol.study-02.json`: the anchor budget, KL coefficient, discovery procedure and diversity settings remain open decisions. After approval, record them and create a new named protocol. For a full protocol, checkpoint-wide evaluation defaults to on; set `EVALUATE_ALL_CHECKPOINTS=0` only for an explicitly exploratory run, and set `MATCH_TOLERANCE` only after approval.
 
 ## Current limits
 
-- The code paths that need Hugging Face models and NTU GPUs have not been run here. The local machine has no accessible CUDA or MPS device, and no model weights were downloaded.
+- The task-only Qwen2.5-1.5B training and four-benchmark evaluation paths have run successfully on an NVIDIA A40 under Study-02. The anchored modes still require approved parameters and full-scale execution.
 - The GSM8K answer parser is a documented numeric heuristic. Lock and inspect it on validation examples before final evaluation.
 - The current target-training interface accepts prompt/response JSONL and is reusable for another supervised target. The supplied final evaluator implements GSM8K, BoolQ, HellaSwag and ARC-Easy only; an additional target requires a task-specific evaluation adapter.
 - The fixed budget equalizes scored continuation tokens. Variable prompt length still affects compute and should be reported.
