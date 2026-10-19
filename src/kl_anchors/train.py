@@ -200,8 +200,8 @@ def run(protocol_path: Path, *, mode: str, experiment_id: str, condition: str, d
         raise ValueError("training requires the current internal evaluator source fingerprint")
     if rule not in ("min_validation_loss", "max_gsm8k_exact_match"):
         raise ValueError("best metric must be min_validation_loss or max_gsm8k_exact_match")
-    if protocol["training"]["optimizer"] != "adamw":
-        raise ValueError("current runner supports training.optimizer=adamw")
+    if protocol["training"]["optimizer"] not in ("adamw", "adamw_8bit"):
+        raise ValueError("unsupported optimizer")
     if protocol["training"]["batch_policy"] != "shuffled_repeat":
         raise ValueError("current runner supports training.batch_policy=shuffled_repeat")
     from .evaluate_study import evaluation_from_study_protocol
@@ -256,7 +256,29 @@ def run(protocol_path: Path, *, mode: str, experiment_id: str, condition: str, d
             teacher.eval()
             for parameter in teacher.parameters():
                 parameter.requires_grad_(False)
-        optimizer = torch.optim.AdamW((p for p in student.parameters() if p.requires_grad), lr=protocol["training"]["learning_rate"])
+
+        trainable_params = [
+            p for p in student.parameters() if p.requires_grad
+        ]
+
+        optimizer_name = protocol["training"]["optimizer"]
+        learning_rate = protocol["training"]["learning_rate"]
+
+        if optimizer_name == "adamw_8bit":
+            import bitsandbytes as bnb
+
+            optimizer = bnb.optim.AdamW8bit(
+                trainable_params,
+                lr=learning_rate,
+                weight_decay=0.01
+            )
+        else:
+            optimizer = torch.optim.AdamW(
+                trainable_params,
+                lr=learning_rate,
+                weight_decay=0.01
+            )
+
         scheduler = _make_scheduler(optimizer, protocol)
         batch_size = protocol["training"]["per_device_batch_size"]
         grad_accum = protocol["training"]["gradient_accumulation_steps"]
@@ -269,6 +291,7 @@ def run(protocol_path: Path, *, mode: str, experiment_id: str, condition: str, d
         target_tokens_seen = 0
         anchor_tokens_seen = 0
         anchor_updates = 0
+        training_start = time.perf_counter()
         for step in range(1, max_steps + 1):
             microbatches = [collate(stream.take(batch_size), pad_token_id=tokenizer.pad_token_id, device=runtime["device"]) for _ in range(grad_accum)]
             anchor_batch = None
@@ -289,6 +312,26 @@ def run(protocol_path: Path, *, mode: str, experiment_id: str, condition: str, d
             anchor_tokens_seen += values["anchor_tokens"]
             values.update(step=step, epoch=(step * batch_size * grad_accum / len(target_train)), learning_rate=scheduler.get_last_lr()[0])
             history.append(values)
+            elapsed = time.perf_counter() - training_start
+            avg_step_time = elapsed / step
+            remaining = avg_step_time * (max_steps - step)
+
+            gpu_memory = (
+                torch.cuda.max_memory_allocated() / (1024 ** 3)
+                if torch.cuda.is_available()
+                else 0.0
+            )
+
+            print(
+                f"[TRAIN] Step {step}/{max_steps} "
+                f"({100 * step / max_steps:.1f}%) | "
+                f"Epoch {values['epoch']:.2f} | "
+                f"LR {values['learning_rate']:.2e} | "
+                f"Elapsed {elapsed / 60:.1f} min | "
+                f"ETA {remaining / 60:.1f} min | "
+                f"Peak GPU {gpu_memory:.2f} GiB",
+                flush=True
+            )
             if step % checkpoint_every != 0 and step != max_steps:
                 continue
             checkpoint = run_dir / "checkpoints" / f"step_{step:06d}"

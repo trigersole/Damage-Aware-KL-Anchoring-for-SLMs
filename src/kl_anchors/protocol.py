@@ -151,8 +151,8 @@ def validate_protocol(protocol: Mapping[str, Any]) -> list[str]:
         integer("training.anchor_interleave_every_steps")
         if at("training.scheduler") not in ("constant", "linear", "cosine"):
             errors.append("training.scheduler must be constant, linear or cosine")
-        if at("training.optimizer") != "adamw":
-            errors.append("training.optimizer must be adamw for this runner")
+        if at("training.optimizer") not in ("adamw", "adamw_8bit"):
+            errors.append("training.optimizer must be adamw or adamw_8bit")
         if at("training.batch_policy") != "shuffled_repeat":
             errors.append("training.batch_policy must be shuffled_repeat for this runner")
         if isinstance(at("training.warmup_steps"), int) and isinstance(at("training.max_steps"), int) and at("training.warmup_steps") >= at("training.max_steps"):
