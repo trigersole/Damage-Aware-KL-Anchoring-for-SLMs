@@ -1,0 +1,32 @@
+{
+  "gsm8k": {
+    "repo_id": "openai/gsm8k",
+    "config": "main",
+    "revision": "740312add88f781978c0658806c59bc2815b9866",
+    "split": "test"
+  },
+  "arc_challenge": {
+    "repo_id": "allenai/ai2_arc",
+    "config": "ARC-Challenge",
+    "revision": "210d026faf9955653af8916fad021475a3f00453",
+    "split": "test"
+  },
+  "arc_easy": {
+    "repo_id": "allenai/ai2_arc",
+    "config": "ARC-Easy",
+    "revision": "210d026faf9955653af8916fad021475a3f00453",
+    "split": "test"
+  },
+  "openbookqa": {
+    "repo_id": "allenai/openbookqa",
+    "config": "main",
+    "revision": "388097ea7776314e93a529163e0fea805b8a6454",
+    "split": "test"
+  },
+  "social_iqa": {
+    "repo_id": "allenai/social_i_qa",
+    "config": null,
+    "revision": "8835ceb9141d7896d9d968634a9b21ae440e3ec5",
+    "split": "validation"
+  }
+}

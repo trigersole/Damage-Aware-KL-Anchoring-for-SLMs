@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "condition": "final",
+  "experiment_id": "math10k-llama32-3b-lora",
+  "output_directory": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/results/runs",
+  "model": {
+    "repository_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "datasets": {
+    "math10k": {
+      "repository_id": "AGI-Edgerunners/LLM-Adapters",
+      "source_file": "ft-training_set/math_10k.json",
+      "source_sha256": "0342d0d860ad8592b579329337c90e42eefd3d9f2898043140cbd120630418b8",
+      "source_examples": 9919,
+      "training_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+      "validation_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/validation.jsonl",
+      "split_seed": 42,
+      "validation_size": 300
+    }
+  },
+  "seed": 42,
+  "lora": {
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0.0,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "training_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "linear",
+    "warmup_steps": 361,
+    "batch_policy": "shuffled_repeat",
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "max_steps": 3609,
+    "epochs": 3,
+    "target_examples": 9619,
+    "target_tokens": null,
+    "anchor_interleave_every_steps": 0
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "max_sequence_tokens": 2048,
+    "validation_max_new_tokens": 256,
+    "target_system_prompt": "",
+    "anchor_system_prompt": "",
+    "teacher_max_new_tokens": 64,
+    "anchor_tokens_per_update": 0,
+    "checkpoint_every_steps": 300,
+    "max_grad_norm": 1,
+    "scale_kl_by_temperature_squared": true,
+    "target_answer_append_eos": true
+  },
+  "anchor_selection": {
+    "method": "none",
+    "token_budget": 0,
+    "damage_weight": null,
+    "candidate_pool_manifest": null,
+    "selected_ids_manifest": null
+  },
+  "kl": {
+    "direction": "teacher_to_student",
+    "temperature": 1,
+    "coefficient": 0,
+    "token_mask": "response_tokens",
+    "normalization": "token_mean",
+    "teacher_continuation": null
+  },
+  "evaluation": {
+    "checkpoint_selection_rule": "min_validation_loss",
+    "prompt_format": "Question: {question}\\nAnswer:",
+    "prompt_format_status": "implementation_choice_unverified_in_paper",
+    "benchmarks": {
+      "math": [
+        "gsm8k",
+        "aqua",
+        "svamp"
+      ],
+      "retention": [
+        "arc_challenge",
+        "openbookqa",
+        "social_iqa"
+      ]
+    },
+    "harness": "pending_math10k_evaluator",
+    "harness_revision": null,
+    "model_dtype": "bf16",
+    "tokenizer": {
+      "repo_id": "meta-llama/Llama-3.2-3B",
+      "revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "use_fast": true,
+      "add_special_tokens": false
+    },
+    "generation": {
+      "max_new_tokens": 256,
+      "do_sample": false,
+      "num_beams": 1,
+      "skip_special_tokens": true
+    }
+  },
+  "environment": {
+    "python_version": "3.12.14",
+    "software_versions": "torch=2.11.0+cu128; transformers=4.57.6; datasets=4.8.5; peft=0.21.0; accelerate=1.15.0; sentence-transformers=5.7.0; matplotlib=3.11.2",
+    "hardware": "Slurm-managed NVIDIA A40 GPU with 48 GB VRAM"
+  },
+  "replication_notes": {
+    "paper_specified": [
+      "math10k",
+      "lora.rank=128",
+      "training.epochs=3",
+      "training.optimizer=adamw"
+    ],
+    "implementation_choices": [
+      "base checkpoint interpretation",
+      "300-example validation holdout",
+      "max_sequence_tokens=2048",
+      "alpha=256",
+      "dropout=0",
+      "q/k/v/o targets",
+      "learning_rate=5e-5",
+      "linear scheduler",
+      "warmup_steps=361",
+      "batch size 1, accumulation 8",
+      "prompt format"
+    ],
+    "not_ready_for_existing_train_py": true,
+    "reason": "Existing runner hardcodes GSM8K, chat templating, evaluator fingerprint, and shuffled-repeat steps; new MATH-10K runner and exact-epoch logic required. max_steps is provisional."
+  }
+}
