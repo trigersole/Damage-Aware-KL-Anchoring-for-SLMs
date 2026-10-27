@@ -15,6 +15,13 @@ For every dataset used, record:
 
 The candidate-anchor pool must remain disjoint from GSM8K validation/test data and from the BoolQ, HellaSwag and ARC-Easy evaluation examples.
 
+The proposed [reviewed curation workflow](../docs/ANCHOR_CURATION_REVIEW.md) adds
+explicit decisions for approximate matches and semantic deduplication within the
+candidate pool. Its source export includes raw candidates so false positives can
+be restored without editing an old eligible pool. Preserve the generated input,
+review and final manifests in ignored storage. All anchored conditions must use
+the same frozen output. The final policy remains subject to team agreement.
+
 ## Configured sources and licences
 
 - [GSM8K](https://huggingface.co/datasets/openai/gsm8k): MIT; use `main/train` for target training plus a fixed validation carve-out, and `main/test` only for final evaluation.

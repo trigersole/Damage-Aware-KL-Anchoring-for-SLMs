@@ -101,3 +101,12 @@ lora  random_kl  diverse_kl  damage_kl  damage_diverse_kl
 ```
 
 The untouched base is evaluated separately. `damage_diverse_kl` is an optional extension; base, task-only, random, diversity and vulnerability conditions remain the required comparison.
+
+The proposed [reviewed anchor-curation workflow](docs/ANCHOR_CURATION_REVIEW.md)
+adds reviewable approximate-overlap decisions and conservative semantic
+deduplication. It is an opt-in workflow for team review; final cleaning settings
+must be recorded before new anchored runs.
+
+`propose --export-auto-included` optionally saves an inspection preview of
+automatically passed, unflagged candidates. Training continues to use only the
+finalized pool. See the [PowerShell walkthrough](docs/kl_filtering_new.md).

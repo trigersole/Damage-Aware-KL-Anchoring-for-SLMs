@@ -1,5 +1,7 @@
 # AI6130 Course Project — Project Context
 
+> **2026-10-27 optional anchor-curation workflow:** Hemanth authorized publishing the saved review/deduplication implementation plus `propose --export-auto-included` for inspecting automatically passed, unflagged candidates. The preview excludes hard failures, both participants in unresolved duplicate pairs and pending spot checks; it is hashed and cannot replace the reviewed/finalized pool. See `docs/ANCHOR_CURATION_REVIEW.md`, `docs/kl_filtering_new.md` and the corresponding decision entry. Models, thresholds, audit settings and final-pool choices remain explicit team decisions. Training/evaluation logic and prior experiments are not changed by this update.
+
 > **Purpose:** This is the durable handover document for the Codex project. Read it before planning experiments, editing the proposal, or writing code. It distinguishes confirmed decisions from working choices that still require agreement.
 
 ## 1. Project identity

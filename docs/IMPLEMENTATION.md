@@ -33,7 +33,14 @@ uv run --locked python -m kl_anchors.prepare_data \
 
 This writes `gsm8k_train.jsonl`, `gsm8k_validation.jsonl`, `gsm8k_test.jsonl`, `eligible_anchors.jsonl`, exclusions and a data manifest. Each target row is `{example_id, prompt, response}`. This format is reusable for a later target task; task-specific evaluation adapters can be added separately. Candidate rows are `{example_id, prompt}`. Final test answers are saved for final evaluation but never enter the anchor selector.
 
-Run the embedding overlap screen on the preliminary eligible pool, with an approved embedding model/revision and cosine threshold:
+For the proposed workflow with approximate-match review and semantic deduplication,
+see [Reviewed anchor curation](ANCHOR_CURATION_REVIEW.md). It reconstructs the raw
+candidate source, records review decisions and freezes a common eligible pool.
+Its model, thresholds and review policy require team agreement. Use its frozen
+output in place of the automatically screened pool below; do not apply both
+paths in sequence, because that would prevent restoring old false positives.
+
+To reproduce the existing automatic path, run the embedding overlap screen on the preliminary eligible pool, with an approved embedding model/revision and cosine threshold:
 
 ```bash
 uv run --locked python -m kl_anchors.semantic_audit \

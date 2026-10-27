@@ -2,7 +2,7 @@
 
 This file is the authoritative record of agreed design choices and unresolved questions. Update it whenever the team approves a material change.
 
-**Last reviewed:** 2026-10-16
+**Last reviewed:** 2026-10-27 (optional reviewed anchor-curation implementation and preview approved for publication)
 
 ## Confirmed decisions
 
@@ -53,6 +53,16 @@ These are scientifically recommended controls but should not be represented as t
 13. **Extension criterion:** Define when resources are sufficient to attempt a second target domain.
 
 ## Decision log
+
+### 2026-10-27 — Publish reviewed anchor curation with an optional preview
+
+- **Status:** Implementation approved for publication by Hemanth's request to push the saved anchor-curation changes and his teammate's preview suggestion. This is not approval of numerical cleaning settings or a research launch.
+- **Decision:** Provide the separate `export` / `propose` / reviewed `finalize` workflow. Approximate benchmark matches and semantic candidate duplicates require recorded review. Exact/quality exclusions remain automatic; configured evaluation inputs remain in decontamination. All anchored conditions use the same finalized pool.
+- **Preview:** `propose --export-auto-included` writes `auto_included_anchors.jsonl` after full lexical/semantic screening. Exclude hard failures, both members of unresolved duplicate pairs, benchmark-overlap flags and pending spot checks. Hash and count the preview in the review manifest. The optional output does not approve a pool, alter review decisions or bypass finalization. Reject it with lexical-only screening.
+- **Documentation:** Publish `docs/ANCHOR_CURATION_REVIEW.md` and an updated `docs/kl_filtering_new.md`, adapted from the supplied Markdown guide with duplication removed and current preview commands.
+- **Still open:** Candidate source approval, embedding model/revision, thresholds, long-input policy, explicit target-training overlap scope, review rubric and audit sample settings must be recorded before a real curation run. The export adapter currently covers GSM8K, BoolQ, HellaSwag and ARC-Easy; extending evaluation sets requires the corresponding input renderers. No model, training, KL coefficient, primary evaluation or anchor-token budget is selected by this implementation.
+- **Existing experiments:** Preserve all results, weights and training/evaluation code. No real pool, encoder download, training or KL result is claimed by publishing this workflow. Verification uses synthetic fixtures; see the review guide for reproduction commands.
+- **Verification:** The latest-repository full suite passes all 85 tests, including all 22 curation tests. Preview-on/off produces identical review flags and finalized pools; both duplicate-pair members, hard failures and pending spot checks are withheld from the preview. Missing review decisions and preview tampering remain errors. The command-line help exposes the optional flag. No real encoder download or model run was used.
 
 Add new entries in this format:
 
