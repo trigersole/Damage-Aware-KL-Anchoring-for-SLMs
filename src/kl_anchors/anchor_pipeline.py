@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import random
+import time
 from pathlib import Path
 
 import torch
@@ -48,19 +50,28 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def cache_teacher(protocol: dict, anchors_path: Path, output: Path) -> None:
+def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int | None = None) -> None:
     if output.exists():
         raise FileExistsError(output)
-    recorded_path = Path(protocol["datasets"]["anchors"]["eligible_ids_manifest"])
-    if anchors_path.resolve() != recorded_path.resolve():
+    manifest = protocol.get("datasets", {}).get("anchors", {}).get("eligible_ids_manifest")
+    if manifest and anchors_path.resolve() != Path(manifest).resolve():
         raise ValueError("teacher cache input must match the protocol's frozen eligible-anchor manifest")
+    if limit is not None and limit <= 0:
+        raise ValueError("--limit must be positive")
     set_seed(int(protocol["seed"]))
     tokenizer = load_tokenizer(protocol["model"])
     runtime, lora = protocol["runtime"], protocol["lora"]
     teacher = load_base(protocol["model"], precision=lora["precision"], quantization=lora["quantization"], device=runtime["device"])
     teacher.eval()
+    all_anchors = read_jsonl(anchors_path)
+    if limit is not None and limit < len(all_anchors):
+        # Deterministic random pilot, not simply the first 200 Dolly records.
+        rng = random.Random(int(protocol["seed"]))
+        indices = sorted(rng.sample(range(len(all_anchors)), limit))
+        all_anchors = [all_anchors[i] for i in indices]
     rows = []
-    for item in read_jsonl(anchors_path):
+    started = time.perf_counter()
+    for index, item in enumerate(all_anchors, 1):
         rendered = render_chat_prompt(tokenizer, item["prompt"], runtime["anchor_system_prompt"])
         prompt_ids = tokenizer.encode(rendered, add_special_tokens=False)
         if not prompt_ids:
@@ -86,6 +97,8 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path) -> None:
             "continuation_token_ids": continuation,
             "response_token_count": len(continuation),
         })
+        if index % 25 == 0 or index == len(all_anchors):
+            print(f"cache: {index}/{len(all_anchors)} anchors, elapsed={time.perf_counter()-started:.1f}s", flush=True)
     write_jsonl_exclusive(output, rows)
     metadata = {
         "model": protocol["model"],
@@ -93,6 +106,8 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path) -> None:
         "source_sha256": file_sha256(anchors_path),
         "seed": protocol["seed"],
         "teacher_max_new_tokens": runtime["teacher_max_new_tokens"],
+        "cached_anchor_count": len(rows),
+        "cache_elapsed_seconds": time.perf_counter() - started,
         "anchor_system_prompt": runtime["anchor_system_prompt"],
         "cache_sha256": file_sha256(output),
     }
@@ -100,67 +115,115 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path) -> None:
         stream.write(json.dumps(metadata, indent=2) + "\n")
 
 
-def score_discovery(protocol: dict, cache_path: Path, adapter_path: Path, output: Path) -> None:
+def score_discovery(
+    protocol: dict, cache_path: Path, adapter_path: Path, output: Path,
+    *, batch_size: int = 1, allow_final_checkpoint: bool = False,
+) -> None:
+    """Score each cached anchor individually; report throughput and GPU peak memory."""
     if output.exists():
         raise FileExistsError(output)
+    if batch_size < 1:
+        raise ValueError("--batch-size must be >= 1")
     if not adapter_path.is_dir() or adapter_path.parent.name != "checkpoints" or not adapter_path.name.startswith("step_"):
-        raise ValueError("discovery adapter must be an explicit saved step checkpoint")
+        raise ValueError("adapter must be an explicit checkpoints/step_* directory")
     discovery_protocol_path = adapter_path.parent.parent / "protocol.json"
     if not discovery_protocol_path.is_file():
-        raise ValueError("discovery checkpoint lacks its immutable protocol")
-    discovery_protocol = load_protocol(discovery_protocol_path)
-    if discovery_protocol.get("condition") != "discovery" or discovery_protocol.get("model") != protocol["model"]:
-        raise ValueError("discovery checkpoint and scoring reference must use the same pinned base model")
+        raise ValueError("checkpoint lacks its original run protocol.json")
+    checkpoint_protocol = load_protocol(discovery_protocol_path)
+    condition = checkpoint_protocol.get("condition")
+    allowed = {"discovery", "final"} if allow_final_checkpoint else {"discovery"}
+    if condition not in allowed:
+        raise ValueError(
+            f"checkpoint condition={condition!r}; use --allow-final-checkpoint "
+            "to score a step checkpoint from an existing final training run"
+        )
+    if checkpoint_protocol.get("model") != protocol["model"]:
+        raise ValueError("checkpoint and scoring reference must use the same pinned base model")
     cache_meta_path = cache_path.with_suffix(cache_path.suffix + ".meta.json")
     if not cache_meta_path.is_file():
         raise ValueError("teacher cache lacks provenance metadata")
     cache_meta = json.loads(cache_meta_path.read_text(encoding="utf-8"))
     if cache_meta.get("model") != protocol["model"] or cache_meta.get("cache_sha256") != file_sha256(cache_path):
-        raise ValueError("teacher cache does not match the pinned scoring reference")
-    eligible_path = Path(protocol["datasets"]["anchors"]["eligible_ids_manifest"])
-    if not eligible_path.is_file() or cache_meta.get("source_sha256") != file_sha256(eligible_path):
-        raise ValueError("teacher cache does not match the frozen eligible-anchor pool")
+        raise ValueError("teacher cache does not match pinned scoring reference")
+    source_path = Path(cache_meta["source_anchor_manifest"])
+    if not source_path.is_file() or cache_meta.get("source_sha256") != file_sha256(source_path):
+        raise ValueError("original eligible-anchor pool differs from cached source")
+    manifest = protocol.get("datasets", {}).get("anchors", {}).get("eligible_ids_manifest")
+    if manifest and (Path(manifest).resolve() != source_path.resolve()):
+        raise ValueError("scoring protocol anchor manifest differs from teacher cache source")
     runtime, lora = protocol["runtime"], protocol["lora"]
     model_args = dict(precision=lora["precision"], quantization=lora["quantization"], device=runtime["device"])
+    if protocol["kl"]["direction"] != "teacher_to_student":
+        raise ValueError("damage scoring requires teacher_to_student KL")
     teacher = load_base(protocol["model"], **model_args)
     student = attach_saved_lora(load_base(protocol["model"], **model_args), str(adapter_path))
     teacher.eval()
     student.eval()
-    # The current documented vulnerability definition is teacher-to-adapted KL.
-    # Its temperature and normalization still need the team's final protocol.
-    if protocol["kl"]["direction"] != "teacher_to_student":
-        raise ValueError("discovery vulnerability score requires teacher_to_student KL")
+    cache_rows = read_jsonl(cache_path)
+    if not cache_rows:
+        raise ValueError("teacher cache is empty")
     rows = []
-    for item in read_jsonl(cache_path):
-        ex = tokenize_saved_continuation(
+    device = runtime["device"]
+    if str(device).startswith("cuda"):
+        torch.cuda.synchronize(device)
+        torch.cuda.reset_peak_memory_stats(device)
+    started = time.perf_counter()
+    for offset in range(0, len(cache_rows), batch_size):
+        chunk = cache_rows[offset:offset + batch_size]
+        examples = [tokenize_saved_continuation(
             example_id=item["example_id"],
             prompt_token_ids=item["prompt_token_ids"],
             continuation_token_ids=item["continuation_token_ids"],
             max_sequence_tokens=runtime["max_sequence_tokens"],
-        )
-        batch = collate([ex], pad_token_id=0, device=runtime["device"])
-        with torch.no_grad():
+        ) for item in chunk]
+        batch = collate(examples, pad_token_id=0, device=device)
+        with torch.inference_mode():
             teacher_logits = teacher(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]).logits
             student_logits = student(input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]).logits
-            score = aligned_response_kl(
+            per_token = aligned_response_kl(
                 teacher_logits, student_logits, batch["response_mask"],
                 direction="teacher_to_student", temperature=protocol["kl"]["temperature"],
-                reduction="token_mean", scale_by_temperature_squared=runtime["scale_kl_by_temperature_squared"],
+                reduction="none", scale_by_temperature_squared=runtime["scale_kl_by_temperature_squared"],
             )
-        rows.append({"example_id": item["example_id"], "vulnerability_score": float(score.cpu())})
+            mask = batch["response_mask"][:, 1:]
+            scores = (per_token.sum(dim=1) / mask.sum(dim=1)).cpu().tolist()
+        rows.extend({"example_id": item["example_id"], "vulnerability_score": float(score)}
+                    for item, score in zip(chunk, scores))
+        del batch, teacher_logits, student_logits, per_token, mask
+        done = offset + len(chunk)
+        if done % 25 < batch_size or done == len(cache_rows):
+            print(f"score: {done}/{len(cache_rows)} anchors, elapsed={time.perf_counter()-started:.1f}s", flush=True)
+    if str(device).startswith("cuda"):
+        torch.cuda.synchronize(device)
+        peak_bytes = torch.cuda.max_memory_allocated(device)
+        peak_reserved_bytes = torch.cuda.max_memory_reserved(device)
+    else:
+        peak_bytes = peak_reserved_bytes = None
+    elapsed = time.perf_counter() - started
     write_jsonl_exclusive(output, rows)
     metadata = {
         "teacher_model": protocol["model"],
+        "checkpoint_condition": condition,
         "discovery_adapter": str(adapter_path.resolve()),
         "teacher_cache": str(cache_path.resolve()),
         "teacher_cache_sha256": file_sha256(cache_path),
         "direction": "teacher_to_student",
         "temperature": protocol["kl"]["temperature"],
         "normalization": "mean_over_response_tokens",
+        "batch_size": batch_size,
+        "anchor_count": len(rows),
+        "scoring_elapsed_seconds": elapsed,
+        "anchors_per_second": len(rows) / elapsed,
+        "estimated_full_13722_seconds": 13722 * elapsed / len(rows),
+        "peak_cuda_allocated_bytes": peak_bytes,
+        "peak_cuda_reserved_bytes": peak_reserved_bytes,
         "scores_sha256": file_sha256(output),
     }
     with output.with_suffix(output.suffix + ".meta.json").open("x", encoding="utf-8") as stream:
         stream.write(json.dumps(metadata, indent=2) + "\n")
+    print(json.dumps({k: metadata[k] for k in (
+        "batch_size", "anchor_count", "scoring_elapsed_seconds", "anchors_per_second",
+        "estimated_full_13722_seconds", "peak_cuda_allocated_bytes", "peak_cuda_reserved_bytes")}, indent=2), flush=True)
 
 
 def merge_signals(cache_path: Path, scores_path: Path, ranks_path: Path, output: Path) -> None:
@@ -202,11 +265,14 @@ def main() -> None:
     cache.add_argument("--protocol", type=Path, required=True)
     cache.add_argument("--anchors", type=Path, required=True)
     cache.add_argument("--output", type=Path, required=True)
+    cache.add_argument("--limit", type=int, default=None, help="deterministic random pilot sample size")
     score = sub.add_parser("score")
     score.add_argument("--protocol", type=Path, required=True)
     score.add_argument("--cache", type=Path, required=True)
     score.add_argument("--discovery-adapter", type=Path, required=True)
     score.add_argument("--output", type=Path, required=True)
+    score.add_argument("--batch-size", type=int, default=1)
+    score.add_argument("--allow-final-checkpoint", action="store_true", help="allow step checkpoint from a final training run")
     merge = sub.add_parser("merge")
     merge.add_argument("--cache", type=Path, required=True)
     merge.add_argument("--scores", type=Path, required=True)
@@ -214,9 +280,10 @@ def main() -> None:
     merge.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "cache":
-        cache_teacher(load_protocol(args.protocol), args.anchors, args.output)
+        cache_teacher(load_protocol(args.protocol), args.anchors, args.output, limit=args.limit)
     elif args.command == "score":
-        score_discovery(load_protocol(args.protocol), args.cache, args.discovery_adapter, args.output)
+        score_discovery(load_protocol(args.protocol), args.cache, args.discovery_adapter, args.output,
+                        batch_size=args.batch_size, allow_final_checkpoint=args.allow_final_checkpoint)
     else:
         merge_signals(args.cache, args.scores, args.ranks, args.output)
 

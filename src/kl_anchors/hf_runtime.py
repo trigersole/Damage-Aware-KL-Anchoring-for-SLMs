@@ -22,13 +22,30 @@ def set_seed(seed: int) -> None:
         torch.cuda.manual_seed_all(seed)
 
 
-def render_chat_prompt(tokenizer, content: str, system_prompt: str) -> str:
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": content})
-    return tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+def render_chat_prompt(tokenizer, prompt: str, system_prompt: str = "") -> str:
+    if tokenizer.chat_template is None:
+        if system_prompt.strip():
+            return f"{system_prompt.strip()}\n\n{prompt}"
+        return prompt
 
+    messages = []
+
+    if system_prompt.strip():
+        messages.append({
+            "role": "system",
+            "content": system_prompt
+        })
+
+    messages.append({
+        "role": "user",
+        "content": prompt
+    })
+
+    return tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True
+    )
 
 def load_tokenizer(model: Mapping[str, str]):
     from transformers import AutoTokenizer
