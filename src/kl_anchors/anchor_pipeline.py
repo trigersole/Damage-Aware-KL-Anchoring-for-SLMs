@@ -70,6 +70,7 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int |
         indices = sorted(rng.sample(range(len(all_anchors)), limit))
         all_anchors = [all_anchors[i] for i in indices]
     rows = []
+    skipped = []
     started = time.perf_counter()
     for index, item in enumerate(all_anchors, 1):
         rendered = render_chat_prompt(tokenizer, item["prompt"], runtime["anchor_system_prompt"])
@@ -77,7 +78,17 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int |
         if not prompt_ids:
             raise ValueError(f"empty tokenized anchor prompt: {item['example_id']}")
         if len(prompt_ids) + runtime["teacher_max_new_tokens"] > runtime["max_sequence_tokens"]:
-            raise ValueError(f"anchor too long for fixed continuation length: {item['example_id']}")
+            skipped.append({
+                "example_id": item["example_id"],
+                "reason": "prompt_exceeds_token_limit",
+                "prompt_token_count": len(prompt_ids),
+                "maximum_prompt_tokens": runtime["max_sequence_tokens"] - runtime["teacher_max_new_tokens"],
+            })
+            print(f"SKIP overlength: {item['example_id']} ({len(prompt_ids)} tokens)", flush=True)
+            if index % 25 == 0 or index == len(all_anchors):
+                print(f"cache: {index}/{len(all_anchors)} processed, {len(rows)} cached, "
+                      f"{len(skipped)} skipped, elapsed={time.perf_counter()-started:.1f}s", flush=True)
+            continue
         inputs = torch.tensor([prompt_ids], dtype=torch.long, device=runtime["device"])
         with torch.no_grad():
             generated = teacher.generate(
@@ -99,6 +110,10 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int |
         })
         if index % 25 == 0 or index == len(all_anchors):
             print(f"cache: {index}/{len(all_anchors)} anchors, elapsed={time.perf_counter()-started:.1f}s", flush=True)
+    if not rows:
+        raise ValueError("no eligible anchors remained after length filtering")
+    skip_path = output.with_suffix(output.suffix + ".skipped.jsonl")
+    write_jsonl_exclusive(skip_path, skipped)
     write_jsonl_exclusive(output, rows)
     metadata = {
         "model": protocol["model"],
@@ -107,6 +122,10 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int |
         "seed": protocol["seed"],
         "teacher_max_new_tokens": runtime["teacher_max_new_tokens"],
         "cached_anchor_count": len(rows),
+        "input_anchor_count": len(all_anchors),
+        "skipped_anchor_count": len(skipped),
+        "skipped_anchors_file": str(skip_path.resolve()),
+        "skipped_anchors_sha256": file_sha256(skip_path),
         "cache_elapsed_seconds": time.perf_counter() - started,
         "anchor_system_prompt": runtime["anchor_system_prompt"],
         "cache_sha256": file_sha256(output),
