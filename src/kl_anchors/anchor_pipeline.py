@@ -73,7 +73,8 @@ def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int |
     skipped = []
     started = time.perf_counter()
     for index, item in enumerate(all_anchors, 1):
-        rendered = render_chat_prompt(tokenizer, item["prompt"], runtime["anchor_system_prompt"])
+        template = protocol["evaluation"]["prompt_format"].replace("\\n", "\n")
+        rendered = template.replace("{question}", item["prompt"])
         prompt_ids = tokenizer.encode(rendered, add_special_tokens=False)
         if not prompt_ids:
             raise ValueError(f"empty tokenized anchor prompt: {item['example_id']}")
