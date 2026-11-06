@@ -26,7 +26,9 @@
   "social_iqa": {
     "repo_id": "allenai/social_i_qa",
     "config": null,
-    "revision": "8835ceb9141d7896d9d968634a9b21ae440e3ec5",
-    "split": "validation"
+    "revision": "6db3dcea20d5430c3dd74bf85fe9ca87268ea91b",
+    "split": "validation",
+    "format": "parquet",
+    "data_file": "https://huggingface.co/datasets/allenai/social_i_qa/resolve/6db3dcea20d5430c3dd74bf85fe9ca87268ea91b/data/validation-00000-of-00001.parquet"
   }
 }

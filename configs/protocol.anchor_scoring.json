@@ -2,7 +2,7 @@
   "schema_version": 1,
   "condition": "final",
   "experiment_id": "math10k-llama32-3b-lora",
-  "output_directory": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/results/runs",
+  "output_directory": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs",
   "model": {
     "repository_id": "meta-llama/Llama-3.2-3B",
     "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
@@ -13,13 +13,13 @@
       "source_file": "ft-training_set/math_10k.json",
       "source_sha256": "0342d0d860ad8592b579329337c90e42eefd3d9f2898043140cbd120630418b8",
       "source_examples": 9919,
-      "training_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
-      "validation_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/validation.jsonl",
+      "training_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+      "validation_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/validation.jsonl",
       "split_seed": 42,
       "validation_size": 300
     },
     "anchors": {
-      "eligible_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/anchors/eligible_anchors.jsonl"
+      "eligible_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/anchors/eligible_anchors.jsonl"
     }
   },
   "seed": 42,
@@ -37,7 +37,7 @@
     "quantization": "none"
   },
   "training": {
-    "training_ids_manifest": "/home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+    "training_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
     "optimizer": "adamw",
     "learning_rate": 5e-05,
     "scheduler": "linear",

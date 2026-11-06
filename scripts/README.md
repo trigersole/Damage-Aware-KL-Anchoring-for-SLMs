@@ -120,3 +120,113 @@ tail -f "slurm-<job-id>.err"
 ```
 
 Training writes `results/runs/${RUN_PREFIX}-${MODE}/`. Inspect `status.json`, `protocol.json`, `validation_history.jsonl` and `best_model/`. Capped evaluation adds `evaluation_status.json` and `evaluation/`; full evaluation adds `evaluation_full_status.json` and `evaluation_full/`. Generated datasets, adapters, predictions and Slurm logs are ignored by Git; preserve compact report artifacts separately.
+
+## Exploratory Math10K diversity-KL run
+
+This separate path preserves the existing Llama-3.2-3B Math10K baseline and
+uses the schedule approved on 2026-11-05. First reproduce the CPU-side target
+manifests using the commands in `data/README.md`. Then rank on the GPU:
+
+```bash
+mkdir -p logs
+sbatch --export=ALL,STAGE=rank scripts/slurm_math10k_diverse_kl.sbatch
+```
+
+The rank stage aligns the part-2 prompt pool to the completed teacher cache,
+embeds it with the pinned `sentence-transformers/all-MiniLM-L6-v2` revision and
+writes deterministic farthest-first ranks. Run preflight directly without
+requesting a GPU allocation:
+
+```bash
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+  uv run --locked --no-sync python -m kl_anchors.train_math10k \
+  --protocol configs/protocol.math10k-llama32-3b-diverse-kl-exploratory.json \
+  --mode diverse_kl --experiment-id math10k-llama32-3b-diverse-kl-exp01 \
+  --preflight
+```
+
+It must report `Anchor preflight OK: prompts=128 positions=255`. Then submit:
+
+```bash
+sbatch --export=ALL,STAGE=train scripts/slurm_math10k_diverse_kl.sbatch
+```
+
+Training applies 64 scored positions every four updates with KL coefficient
+0.01. The expected total is 902 KL events and 57,728 scored-position exposures
+over 3,609 updates. Use a new `EXPERIMENT_ID` if the default output directory
+already exists; never overwrite a completed run.
+
+### Full-pool Math10K diversity prompt export
+
+Evaluate the completed corrected `fullpool-02` best adapter on all five pinned
+Math10K evaluator datasets with
+`sbatch scripts/slurm_math10k_diverse_fullpool_eval.sbatch`.
+The single six-hour job runs ten items per benchmark first, then the full
+GSM8K, ARC-Challenge, ARC-Easy, OpenBookQA and Social IQA splits. Outputs are
+`results/eval/math10k-diverse-fullpool-02-best-all-smoke-01` and
+`results/eval/math10k-diverse-fullpool-02-best-all-full-01`, each containing
+`items.jsonl` and `aggregate.json`. Existing output directories cause a refusal
+to overwrite. ARC-Easy is an additional benchmark relative to the earlier
+four-benchmark Math10K evaluation suite.
+
+After the quota-failed `fullpool-01`, restart with
+`sbatch scripts/slurm_math10k_diverse_fullpool_restart.sbatch`.
+The new `fullpool-02` run uses
+`configs/protocol.math10k-llama32-3b-diverse-kl-fullpool-restart.json` and
+identical seed/training settings from the untouched base. The optional
+`runtime.keep_last_checkpoints=1` retains the best plus latest checkpoint,
+pruning older weights only after successful saving and validation; histories
+remain available. Zero/unset keeps the historical retain-all behavior.
+
+Train with the corrected length-eligible 128-prompt selection using
+`sbatch scripts/slurm_math10k_diverse_fullpool_train.sbatch` (six-hour limit).
+Configuration: `configs/protocol.math10k-llama32-3b-diverse-kl-fullpool.json`.
+Run: `results/runs/math10k-llama32-3b-diverse-kl-fullpool-01`.
+It uses seed 42, KL weight 0.01 and the existing three-epoch Math10K protocol.
+The training manifest contains the already selected 128 prompts with verified
+continuation lengths; the configuration also records the complete eligible
+pool and ranks used to select them.
+
+For the KL-length-eligible 128-prompt export, use
+`sbatch scripts/slurm_math10k_diversity_eligible.sbatch` (six-hour limit).
+It screens the complete 13,769-row source using the existing Llama prompt length
+policy before reranking. Output `artifacts/math10k/full-eligible-128-v1/`
+contains exclusions, eligible pool, full ranks, selected prompt text, selected
+teacher continuations, exact 255-position allocation and completion manifest.
+Teacher generation runs only for the selected 128; all candidates undergo the
+same tokenizer-based eligibility check. This does not launch training.
+
+The earlier exploratory run ranked only the part-2 shard. Do not use its
+selection as the full-pool diverse condition. Rank all 13,769 prompts in the
+frozen combined manifest and export the first 128 ranks with:
+
+```bash
+mkdir -p logs
+sbatch scripts/slurm_math10k_diversity_full.sbatch
+```
+
+The six-hour job writes the complete ranking to
+`artifacts/math10k/full/diversity_ranks_full.jsonl` and the shareable selected
+prompt set to `artifacts/math10k/full/diverse_prompts_top128.jsonl`. Both retain
+the pinned embedding-model revision, seed, pool fingerprint and prompt text.
+
+After the diverse-KL run completes, evaluate its validation-selected
+`best_model` checkpoint. Start with the four-benchmark, ten-item smoke job:
+
+```bash
+sbatch --export=ALL,SCOPE=smoke scripts/slurm_math10k_diverse_eval.sbatch
+```
+
+After it succeeds, submit one full job per benchmark. Every job retains the
+six-hour compute limit and writes a separate immutable output directory:
+
+```bash
+for benchmark in gsm8k arc_challenge openbookqa social_iqa; do
+  sbatch --export=ALL,SCOPE=full,BENCHMARK="$benchmark" \
+    scripts/slurm_math10k_diverse_eval.sbatch
+done
+```
+
+These use the pinned dataset revisions in `configs/math10k_eval_datasets.json`.
+The current Math10K evaluator is an exploratory, study-specific protocol; do
+not present these outputs as the final core GSM8K/Qwen comparison.

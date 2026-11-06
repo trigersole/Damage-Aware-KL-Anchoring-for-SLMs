@@ -1,0 +1,27 @@
+{
+  "targets": [
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_000300",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_000600",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_000900",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_001200",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_001500",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_001800",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_002100",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_002700",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_003000",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_003300",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_003600",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-exp01/checkpoints/step_003609",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-fullpool-01/checkpoints/step_000300",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-fullpool-01/checkpoints/step_000600",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-fullpool-01/checkpoints/step_000900",
+    "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-fullpool-01/checkpoints/step_001500"
+  ],
+  "bytes": 4663492240,
+  "preserved": [
+    "part-2 best checkpoint step_002400 and best_model",
+    "failed full-pool checkpoint step_001200",
+    "all run metadata, histories, logs and evaluation outputs",
+    "completed task-only baseline, untouched"
+  ]
+}

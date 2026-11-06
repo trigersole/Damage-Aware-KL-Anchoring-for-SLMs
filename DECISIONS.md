@@ -2,7 +2,7 @@
 
 This file is the authoritative record of agreed design choices and unresolved questions. Update it whenever the team approves a material change.
 
-**Last reviewed:** 2026-10-27 (optional reviewed anchor-curation implementation and preview approved for publication)
+**Last reviewed:** 2026-11-05 (exploratory Math10K diversity-KL schedule approved)
 
 ## Confirmed decisions
 
@@ -53,6 +53,66 @@ These are scientifically recommended controls but should not be represented as t
 13. **Extension criterion:** Define when resources are sufficient to attempt a second target domain.
 
 ## Decision log
+
+### 2026-11-05 — Evaluate corrected full-pool diverse LoRA on configured datasets
+
+- **Status:** Approved.
+- **Decision:** Evaluate the completed `math10k-llama32-3b-diverse-kl-fullpool-02` validation-selected best adapter (step 2400) on full GSM8K test, ARC-Challenge test, ARC-Easy test, OpenBookQA test and Social IQA validation using `configs/math10k_eval_datasets.json` and the existing Math10K evaluator. First run a ten-item-per-benchmark smoke check. Preserve per-item outputs and aggregate metrics in new output directories; six-hour Slurm cap.
+- **Reason:** User requested testing on all available datasets. These five are the supported pinned datasets in the Math10K evaluation configuration.
+- **Consequences:** ARC-Easy is an additional evaluation alongside the previously configured Math10K retention suite; report it separately where comparators lack matching evaluation. Training and validation-based checkpoint selection are unchanged. Other target datasets and the core study's distinct evaluation harness are outside this configured suite. Existing scoring and curation-provenance limitations remain.
+- **Approved by:** User, in this task.
+
+### 2026-11-05 — Restart full-pool diverse LoRA after quota failure
+
+- **Status:** Approved.
+- **Decision:** Restart independently from the same untouched base and seed under experiment `math10k-llama32-3b-diverse-kl-fullpool-02`, keeping all optimization, data, anchor-selection, KL and six-hour settings. Retain only the best and latest checkpoints during this run, with all losses and per-step metrics preserved.
+- **Reason:** Job 51398 failed while saving step 1500 because the disk quota was exhausted. Existing adapter-only checkpoints lack optimizer state; the user explicitly chose an identical-settings restart over continuation with reset AdamW moments.
+- **Cleanup:** User authorized removing unnecessary old/failed-run artifacts. Removed 16 redundant/incomplete checkpoint directories totaling 4,663,492,240 bytes; exact targets recorded in `results/cleanup-2026-11-05.json`. Preserve the failed run's step-1200 adapter, the superseded part-2 run's best adapter and records, all run histories and the complete task-only baseline. Removed checkpoint weights cannot be recovered from this workspace.
+- **Consequences:** Failed run remains labeled failed. New run uses a new protocol and ID. Checkpoint retention changes storage only, not training or checkpoint selection. Full optimizer/RNG checkpoint resumption remains unimplemented.
+- **Approved by:** User, including explicit choice to restart with identical seed/settings.
+
+### 2026-11-05 — Train Math10K LoRA using corrected full-pool diverse anchors
+
+- **Status:** Approved.
+- **Decision:** Launch `math10k-llama32-3b-diverse-kl-fullpool-01` from the untouched pinned Llama-3.2-3B base with the corrected 128 anchors from `full-eligible-128-v1`. Retain seed 42, KL coefficient 0.01, 255 selected response positions, 64 positions every four optimizer updates, and the existing Math10K three-epoch/3,609-update LoRA protocol. Slurm wall time is six hours.
+- **Reason:** User requested LoRA training using the corrected selection.
+- **Consequences:** New protocol and run directory preserve the old part-2 result. The training input contains the preselected 128 and verified continuation lengths; full 13,750-candidate ranks and selection provenance are separately linked in the protocol. Random/vulnerability comparators must use the full eligible pool, not the 128 training inputs. Original curation provenance and exploratory Math10K evaluation limitations remain unchanged.
+- **Approved by:** User, in this task.
+
+### 2026-11-05 — Length-eligible full-pool diversity selection
+
+- **Status:** Approved by the user's request to select 128 prompts following the repository protocol.
+- **Decision:** Apply the existing Llama tokenizer, Question/Answer template, 2,048-token sequence limit and 64-token continuation reservation to the complete 13,769-prompt pool before recomputing diversity. Select 128 with the existing pinned encoder, farthest-first cosine algorithm and seed 42. Cache deterministic teacher continuations for these prompts and allocate the existing 255 scored-position budget.
+- **Reason:** The earlier full-pool text-only selection included an overlength prompt. Length eligibility is deterministic and can be checked before generation; only selected continuations are needed for this prompt-export task.
+- **Consequences:** Save all exclusions, full ranks, selected prompt text, teacher token IDs and token allocations under `artifacts/math10k/full-eligible-128-v1`. Preserve prior artifacts. Future random/vulnerability comparators must use the identical length-eligible pool. This request does not launch training. The imported source pool's missing original curation audit remains a limitation.
+- **Approved by:** User, in this task.
+
+### 2026-11-05 — Full combined pool for Math10K diversity prompts
+
+- **Status:** Approved.
+- **Decision:** Compute seed-42 farthest-first diversity ranks over all 13,769 prompts in `data/anchors/eligible_anchors.jsonl`, using the already pinned `sentence-transformers/all-MiniLM-L6-v2` revision, and export the first 128 ranked prompts with their text and provenance. Preserve the earlier 6,880-candidate part-2 selection and its trained adapter as exploratory artifacts only.
+- **Reason:** The user explicitly directed that the diverse prompts be created from the full list after identifying that the earlier run ranked only one shard.
+- **Alternatives considered:** Retain the part-2 selection or concatenate independently computed part-1 and part-2 rankings. Both were rejected because neither computes diversity jointly over the full eligible list.
+- **Consequences for existing experiments or documents:** The full-pool prompt export receives new artifact paths and does not overwrite prior results. It does not itself approve or launch retraining. Before KL retraining, teacher continuations must be generated for the selected full-pool anchors and a new experiment ID/configuration must be used.
+- **Approved by:** User, in this task.
+
+### 2026-11-05 — Script-free Social IQA evaluation serialization
+
+- **Status:** Approved as a compatibility correction for the requested exploratory Math10K evaluation; benchmark content and scoring are unchanged.
+- **Decision:** Load Social IQA validation from the official Parquet conversion at immutable dataset revision `6db3dcea20d5430c3dd74bf85fe9ca87268ea91b`. Retain all 1,954 validation examples and the existing context, question, three choices and label fields. Continue using the predeclared single-label conditional-likelihood scoring protocol.
+- **Reason:** `datasets==4.8.5` rejects the older repository revision because it requires executing `social_i_qa.py`. The official pinned Parquet export provides the same benchmark fields without executable dataset code.
+- **Alternatives considered:** Downgrade the datasets library or execute the legacy loading script. Both would change the locked environment or re-enable unsupported arbitrary dataset code.
+- **Consequences for existing experiments or documents:** The failed ten-item smoke job `51306` produced no evaluation output directory. Rerun smoke before full evaluation. This remains an exploratory Math10K evaluation and does not resolve the core GSM8K/Qwen evaluation decisions.
+- **Approved by:** User's request to run the configured evaluation in this task; implementation is a necessary serialization compatibility correction.
+
+### 2026-11-05 — Exploratory Math10K diversity-KL schedule
+
+- **Status:** Approved for an exploratory run; this does not replace the core GSM8K/Qwen comparison design.
+- **Decision:** Starting independently from the pinned `meta-llama/Llama-3.2-3B` base, reuse the completed Math10K baseline's target split, LoRA configuration, optimizer, scheduler and 3,609-update/three-epoch training protocol. Select 128 diversity-ranked Dolly prompts with exactly 255 scored teacher-continuation positions. Apply teacher-to-student, temperature-1, response-token-mean KL with coefficient `0.01`, using 64 scored positions every four optimizer updates. This gives 902 KL events and nominal exposure of 57,728 scored positions. Use deterministic farthest-first cosine ranking with `sentence-transformers/all-MiniLM-L6-v2` at revision `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, seed 42.
+- **Reason:** The user supplied the schedule from the current-run comparison and requested the Math10K training protocol. Exact prompt and token constraints preserve the stated 128-prompt/255-position selection, while chunked KL computation avoids changing its mathematical token-mean objective to fit GPU memory.
+- **Alternatives considered:** A 128-token budget, 16 positions every eight updates; 128 prompts with their full continuations; and applying KL at every update. These were superseded by the supplied current-run settings.
+- **Consequences for existing experiments or documents:** Preserve `math10k-llama32-3b-full-01` unchanged. Use a new protocol and experiment ID. The first run uses only the locally available part-2 anchor shard and is therefore exploratory, not a final core comparison. Any random or vulnerability comparator must draw from the same eligible pool and match both the 255-position selection budget and 57,728-position exposure. Do not generalize its results to the original GSM8K/Qwen study.
+- **Approved by:** User, in this task.
 
 ### 2026-10-27 — Publish reviewed anchor curation with an optional preview
 

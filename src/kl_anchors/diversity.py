@@ -133,6 +133,38 @@ def read_pool(path: str | Path) -> list[dict[str, Any]]:
     return sorted(rows, key=lambda row: row["example_id"])
 
 
+def align_pool_to_teacher_cache(
+    rows: Sequence[Mapping[str, Any]], cache_path: str | Path,
+) -> list[dict[str, Any]]:
+    """Keep cache-eligible prompts and attach their scored response lengths."""
+    cached: dict[str, int] = {}
+    with Path(cache_path).open(encoding="utf-8") as stream:
+        for line_number, line in enumerate(stream, start=1):
+            if not line.strip():
+                continue
+            try:
+                row = json.loads(line)
+                item_id = row["example_id"]
+                count = row["response_token_count"]
+            except (json.JSONDecodeError, TypeError, KeyError) as exc:
+                raise ValueError(f"invalid teacher-cache row on line {line_number}") from exc
+            if not isinstance(item_id, str) or not item_id or type(count) is not int or count < 1:
+                raise ValueError(f"invalid teacher-cache row on line {line_number}")
+            if item_id in cached:
+                raise ValueError("teacher cache contains duplicate candidate IDs")
+            cached[item_id] = count
+    source = {row["example_id"]: row for row in rows}
+    unknown = set(cached) - set(source)
+    if unknown:
+        raise ValueError("teacher cache contains IDs absent from the prompt pool")
+    if not cached:
+        raise ValueError("teacher cache is empty")
+    return [
+        {**source[item_id], "response_token_count": cached[item_id]}
+        for item_id in sorted(cached)
+    ]
+
+
 def embed_prompts(prompts: Sequence[str], config: DiversityConfig) -> np.ndarray:
     """Load the pinned SentenceTransformer lazily and encode the supplied prompts."""
     try:
@@ -188,9 +220,29 @@ def write_ranked_rows(rows: Sequence[Mapping[str, Any]], path: str | Path) -> No
             stream.write(json.dumps(row, ensure_ascii=False, sort_keys=True, allow_nan=False) + "\n")
 
 
+def select_top_ranked_rows(
+    rows: Sequence[Mapping[str, Any]], count: int,
+) -> list[dict[str, Any]]:
+    """Return the first ``count`` diversity ranks in selection order."""
+    if type(count) is not int or count < 1:
+        raise ValueError("selection count must be a positive integer")
+    if count > len(rows):
+        raise ValueError("selection count exceeds the ranked pool")
+    ranks = [row.get("diversity_rank") for row in rows]
+    if any(type(rank) is not int for rank in ranks) or len(set(ranks)) != len(ranks):
+        raise ValueError("ranked rows must contain unique integer diversity ranks")
+    if set(ranks) != set(range(len(rows))):
+        raise ValueError("diversity ranks must be contiguous from zero")
+    return [dict(row) for row in sorted(rows, key=lambda row: row["diversity_rank"])[:count]]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pool", required=True, type=Path, help="Frozen eligible prompt JSONL")
+    parser.add_argument(
+        "--teacher-cache", type=Path,
+        help="Optional cache used to exclude skipped prompts and attach response_token_count",
+    )
     parser.add_argument("--output", required=True, type=Path, help="New ranked JSONL path")
     parser.add_argument("--model-id", required=True)
     parser.add_argument("--model-revision", required=True, help="Full 40-character model commit hash")
@@ -198,7 +250,13 @@ def main() -> None:
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--device", help="Explicit inference device, e.g. cpu or cuda:0")
+    parser.add_argument("--top-k", type=int, help="Also export the first K diversity ranks")
+    parser.add_argument("--selected-output", type=Path, help="JSONL path for the top-K prompt export")
     args = parser.parse_args()
+    if (args.top_k is None) != (args.selected_output is None):
+        parser.error("--top-k and --selected-output must be supplied together")
+    if args.selected_output is not None and args.selected_output.exists():
+        parser.error(f"selected output already exists: {args.selected_output}")
     config = DiversityConfig(
         model_id=args.model_id,
         model_revision=args.model_revision,
@@ -208,10 +266,16 @@ def main() -> None:
         device=args.device,
     )
     rows = read_pool(args.pool)
+    if args.teacher_cache is not None:
+        rows = align_pool_to_teacher_cache(rows, args.teacher_cache)
     embeddings = embed_prompts([row["prompt"] for row in rows], config)
     ranked = rank_pool_rows(rows, embeddings, config)
     write_ranked_rows(ranked, args.output)
     print(f"wrote {len(ranked)} diversity ranks to {args.output}")
+    if args.top_k is not None:
+        selected = select_top_ranked_rows(ranked, args.top_k)
+        write_ranked_rows(selected, args.selected_output)
+        print(f"wrote {len(selected)} selected diverse prompts to {args.selected_output}")
 
 
 if __name__ == "__main__":

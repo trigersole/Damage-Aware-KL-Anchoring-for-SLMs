@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "condition": "final",
+  "experiment_id": "math10k-llama32-3b-diverse-kl-fullpool-02",
+  "output_directory": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs",
+  "model": {
+    "repository_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "datasets": {
+    "math10k": {
+      "repository_id": "AGI-Edgerunners/LLM-Adapters",
+      "source_file": "ft-training_set/math_10k.json",
+      "source_sha256": "0342d0d860ad8592b579329337c90e42eefd3d9f2898043140cbd120630418b8",
+      "source_examples": 9919,
+      "training_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+      "validation_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/validation.jsonl",
+      "split_seed": 42,
+      "validation_size": 300
+    },
+    "anchors": {
+      "repository_id": "databricks/databricks-dolly-15k",
+      "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+      "configuration": "default",
+      "split": "train",
+      "preprocessing": "Full 13,769-prompt source; 19 overlength exclusions; farthest-first diversity over 13,750 length-eligible prompts; selected top 128 cached for training.",
+      "eligible_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/diverse_prompts_top128.jsonl",
+      "full_eligible_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/eligible_anchors.jsonl"
+    }
+  },
+  "seed": 42,
+  "lora": {
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "training_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/data/processed/math10k/train.jsonl",
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "linear",
+    "warmup_steps": 361,
+    "batch_policy": "shuffled_repeat",
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "max_steps": 3609,
+    "epochs": 3,
+    "target_examples": 9619,
+    "target_tokens": null,
+    "anchor_interleave_every_steps": 4
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "max_sequence_tokens": 2048,
+    "validation_max_new_tokens": 256,
+    "target_system_prompt": "",
+    "anchor_system_prompt": "",
+    "teacher_max_new_tokens": 64,
+    "anchor_tokens_per_update": 64,
+    "anchor_microbatch_size": 1,
+    "checkpoint_every_steps": 300,
+    "max_grad_norm": 1,
+    "scale_kl_by_temperature_squared": true,
+    "target_answer_append_eos": true,
+    "keep_last_checkpoints": 1
+  },
+  "anchor_selection": {
+    "method": "diversity",
+    "prompt_budget": 128,
+    "token_budget": 255,
+    "damage_weight": null,
+    "candidate_pool_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/selected_training_pool.jsonl",
+    "selected_ids_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/results/runs/math10k-llama32-3b-diverse-kl-fullpool-02/anchor_selection.json",
+    "diversity": {
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "algorithm": "farthest_first",
+      "distance": "cosine_on_l2_normalized_embeddings",
+      "seed": 42
+    },
+    "full_pool_selection_manifest": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/manifest.json",
+    "full_pool_ranks": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/diversity_ranks.jsonl",
+    "selection_scope": "Preselected top 128 from full length-eligible pool; training assigns only the response-token budget."
+  },
+  "kl": {
+    "direction": "teacher_to_student",
+    "temperature": 1,
+    "coefficient": 0.01,
+    "token_mask": "response_tokens",
+    "normalization": "token_mean",
+    "teacher_continuation": "/home/msai/siddhart022/Damage-Aware-KL-Anchoring-for-SLMs/artifacts/math10k/full-eligible-128-v1/selected_teacher_cache.jsonl"
+  },
+  "evaluation": {
+    "checkpoint_selection_rule": "min_validation_loss",
+    "prompt_format": "Question: {question}\\nAnswer:",
+    "prompt_format_status": "implementation_choice_unverified_in_paper",
+    "benchmarks": {
+      "math": [
+        "gsm8k",
+        "aqua",
+        "svamp"
+      ],
+      "retention": [
+        "arc_challenge",
+        "openbookqa",
+        "social_iqa"
+      ]
+    },
+    "harness": "pending_math10k_evaluator",
+    "harness_revision": null,
+    "model_dtype": "bf16",
+    "tokenizer": {
+      "repo_id": "meta-llama/Llama-3.2-3B",
+      "revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "use_fast": true,
+      "add_special_tokens": false
+    },
+    "generation": {
+      "max_new_tokens": 256,
+      "do_sample": false,
+      "num_beams": 1,
+      "skip_special_tokens": true
+    }
+  },
+  "environment": {
+    "python_version": "3.12.14",
+    "software_versions": "torch=2.11.0+cu128; transformers=4.57.6; datasets=4.8.5; peft=0.21.0; accelerate=1.15.0; sentence-transformers=5.7.0; matplotlib=3.11.2",
+    "hardware": "Slurm-managed NVIDIA A40 GPU with 48 GB VRAM"
+  },
+  "exploratory_run": {
+    "status": "exploratory_not_a_core_final_comparison",
+    "reason": "Math10K/Llama extension; full-pool diversity selection. Imported source pool has no original complete curation audit.",
+    "nominal_anchor_updates": 902,
+    "nominal_scored_position_exposure": 57728,
+    "fairness_requirement": "Comparators must use all 13,750 length-eligible prompts in full_eligible_ids_manifest and match selection and KL exposure budgets."
+  },
+  "restart_provenance": {
+    "previous_run": "math10k-llama32-3b-diverse-kl-fullpool-01",
+    "reason": "Disk quota exceeded saving step 1500; adapter-only checkpoints do not permit exact optimizer resume. User requested restart with identical seed/settings.",
+    "initialization": "same untouched pinned base; fresh optimizer and seed 42",
+    "checkpoint_storage_policy": "retain best plus latest; prune other checkpoints after successful validation"
+  }
+}

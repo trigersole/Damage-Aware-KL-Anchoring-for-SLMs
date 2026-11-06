@@ -21,6 +21,10 @@ def write_jsonl(path, rows):
 
 
 def main():
+    if not SOURCE.is_file():
+        raise FileNotFoundError(
+            f"Missing {SOURCE}. Download the pinned MATH-10K source as documented in data/README.md."
+        )
     digest = hashlib.sha256(SOURCE.read_bytes()).hexdigest()
     if digest != EXPECTED_SHA256:
         raise ValueError(f"Unexpected dataset SHA-256: {digest}")

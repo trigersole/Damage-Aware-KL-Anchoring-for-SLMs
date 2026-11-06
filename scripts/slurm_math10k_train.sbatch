@@ -9,7 +9,7 @@
 
 set -euo pipefail
 
-cd /home/msai/srihari004/Damage-Aware-KL-Anchoring-for-SLMs
+cd "${SLURM_SUBMIT_DIR:?submit from the repository root}"
 
 export PYTHONPATH="$PWD/src:${PYTHONPATH:-}"
 export TOKENIZERS_PARALLELISM=false

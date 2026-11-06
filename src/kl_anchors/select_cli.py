@@ -39,6 +39,8 @@ def main() -> None:
     parser.add_argument("--method", required=True, choices=("random", "diversity", "vulnerability", "damage_diverse"))
     parser.add_argument("--damage-weight", type=float, help="Required only for damage_diverse; fixed rank-fusion weight")
     parser.add_argument("--anchor-token-budget", required=True, type=int)
+    parser.add_argument("--anchor-prompt-budget", type=int,
+                        help="Optional exact prompt count; token budget remains exact")
     parser.add_argument("--seed", required=True, type=int)
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
@@ -48,6 +50,7 @@ def main() -> None:
         anchor_token_budget=args.anchor_token_budget,
         seed=args.seed,
         damage_weight=args.damage_weight,
+        anchor_prompt_budget=args.anchor_prompt_budget,
     )
     output = {
         "schema_version": 1,

@@ -10,10 +10,12 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from kl_anchors.diversity import (  # noqa: E402
+    align_pool_to_teacher_cache,
     DiversityConfig,
     farthest_first_ranks,
     rank_pool_rows,
     read_pool,
+    select_top_ranked_rows,
     write_ranked_rows,
 )
 
@@ -81,6 +83,44 @@ class DiversityTests(unittest.TestCase):
             DiversityConfig("model", "main", "farthest_first", 0)
         with self.assertRaisesRegex(ValueError, "farthest_first"):
             DiversityConfig("model", COMMIT, "kmeans", 0)
+
+    def test_select_top_ranked_rows_returns_selection_order(self):
+        rows = [
+            {"example_id": "last", "prompt": "L", "diversity_rank": 2},
+            {"example_id": "first", "prompt": "F", "diversity_rank": 0},
+            {"example_id": "middle", "prompt": "M", "diversity_rank": 1},
+        ]
+        selected = select_top_ranked_rows(rows, 2)
+        self.assertEqual([row["example_id"] for row in selected], ["first", "middle"])
+        self.assertEqual([row["diversity_rank"] for row in selected], [0, 1])
+
+    def test_select_top_ranked_rows_rejects_invalid_count_or_ranks(self):
+        rows = [{"example_id": "a", "prompt": "A", "diversity_rank": 0}]
+        with self.assertRaisesRegex(ValueError, "positive"):
+            select_top_ranked_rows(rows, 0)
+        with self.assertRaisesRegex(ValueError, "exceeds"):
+            select_top_ranked_rows(rows, 2)
+        with self.assertRaisesRegex(ValueError, "contiguous"):
+            select_top_ranked_rows(
+                [{"example_id": "a", "prompt": "A", "diversity_rank": 1}], 1
+            )
+
+    def test_align_pool_to_teacher_cache_filters_skips_and_adds_lengths(self):
+        rows = [
+            {"example_id": "a", "prompt": "A"},
+            {"example_id": "b", "prompt": "B"},
+            {"example_id": "skipped", "prompt": "too long"},
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "cache.jsonl"
+            cache.write_text(
+                json.dumps({"example_id": "b", "response_token_count": 2}) + "\n"
+                + json.dumps({"example_id": "a", "response_token_count": 1}) + "\n",
+                encoding="utf-8",
+            )
+            aligned = align_pool_to_teacher_cache(rows, cache)
+        self.assertEqual([row["example_id"] for row in aligned], ["a", "b"])
+        self.assertEqual([row["response_token_count"] for row in aligned], [1, 2])
 
 
 if __name__ == "__main__":

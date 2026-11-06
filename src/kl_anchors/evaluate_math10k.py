@@ -21,6 +21,26 @@ DEFAULT_DATASETS = {
     "social_iqa": ("allenai/social_i_qa", None, "validation"),
 }
 
+
+def load_configured_dataset(config, loader=None):
+    """Load a pinned dataset, including script-free Parquet compatibility."""
+    if loader is None:
+        from datasets import load_dataset
+        loader = load_dataset
+    if config.get("format") == "parquet":
+        data_file = config.get("data_file")
+        revision = config["revision"]
+        if not isinstance(data_file, str) or revision not in data_file:
+            raise ValueError("pinned Parquet data_file must contain the configured revision")
+        return loader(
+            "parquet", data_files={config["split"]: data_file},
+            split=config["split"],
+        )
+    return loader(
+        config["repo_id"], name=config.get("config"),
+        revision=config["revision"], split=config["split"],
+    )
+
 def choice_data(benchmark, row):
     if benchmark in {"arc_challenge", "arc_easy", "openbookqa"}:
         options = row["choices"]
@@ -133,12 +153,11 @@ def main():
             p.error(f"adapter not found: {adapter}")
         spec["model"]["adapter_path"] = str(adapter.resolve())
     set_evaluation_seed(int(training["seed"]))
-    from datasets import load_dataset
     backend = HuggingFaceBackend(spec)
     results = []
     for benchmark in dict.fromkeys(args.benchmarks):
         ds = datasets_cfg[benchmark]
-        dataset = load_dataset(ds["repo_id"], name=ds.get("config"), revision=ds["revision"], split=ds["split"])
+        dataset = load_configured_dataset(ds)
         n = len(dataset) if args.limit is None else min(len(dataset), args.limit)
         print(f"Evaluating {benchmark}: {n} examples", flush=True)
         for i in range(n):

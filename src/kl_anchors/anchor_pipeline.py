@@ -15,8 +15,10 @@ import argparse
 import hashlib
 import json
 import random
+import re
 import time
 from pathlib import Path
+from typing import Mapping
 
 import torch
 
@@ -24,6 +26,60 @@ from .hf_runtime import attach_saved_lora, load_base, load_tokenizer, render_cha
 from .kl import aligned_response_kl
 from .protocol import load_protocol
 from .training_core import collate, tokenize_saved_continuation
+
+
+_REVISION = re.compile(r"[0-9a-fA-F]{40}")
+
+
+def validate_anchor_protocol(protocol: Mapping[str, object]) -> list[str]:
+    """Validate fields that affect teacher caching and vulnerability scoring."""
+    errors: list[str] = []
+
+    def at(path: str):
+        value = protocol
+        for part in path.split("."):
+            if not isinstance(value, Mapping) or part not in value:
+                return None
+            value = value[part]
+        return value
+
+    def nonempty(path: str) -> None:
+        value = at(path)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{path} must be a nonempty string")
+
+    nonempty("model.repository_id")
+    revision = at("model.revision")
+    if not isinstance(revision, str) or _REVISION.fullmatch(revision) is None:
+        errors.append("model.revision must be a full 40-character commit SHA")
+    if type(at("seed")) is not int:
+        errors.append("seed must be an integer")
+    if at("lora.precision") not in ("fp32", "fp16", "bf16"):
+        errors.append("lora.precision must be fp32, fp16, or bf16")
+    if at("lora.quantization") not in ("none", "4bit", "8bit"):
+        errors.append("lora.quantization must be none, 4bit, or 8bit")
+    nonempty("runtime.device")
+    for path in ("runtime.max_sequence_tokens", "runtime.teacher_max_new_tokens"):
+        value = at(path)
+        if type(value) is not int or value < 1:
+            errors.append(f"{path} must be a positive integer")
+    if not isinstance(at("runtime.anchor_system_prompt"), str):
+        errors.append("runtime.anchor_system_prompt must be a string")
+    if type(at("runtime.scale_kl_by_temperature_squared")) is not bool:
+        errors.append("runtime.scale_kl_by_temperature_squared must be boolean")
+    nonempty("datasets.anchors.eligible_ids_manifest")
+    if at("kl.direction") != "teacher_to_student":
+        errors.append("kl.direction must be teacher_to_student for vulnerability scoring")
+    temperature = at("kl.temperature")
+    if isinstance(temperature, bool) or not isinstance(temperature, (int, float)) or temperature <= 0:
+        errors.append("kl.temperature must be a positive number")
+    return errors
+
+
+def require_anchor_protocol(protocol: Mapping[str, object]) -> None:
+    errors = validate_anchor_protocol(protocol)
+    if errors:
+        raise ValueError("invalid anchor-pipeline protocol:\n- " + "\n- ".join(errors))
 
 
 def read_jsonl(path: Path) -> list[dict]:
@@ -51,6 +107,7 @@ def file_sha256(path: Path) -> str:
 
 
 def cache_teacher(protocol: dict, anchors_path: Path, output: Path, limit: int | None = None) -> None:
+    require_anchor_protocol(protocol)
     if output.exists():
         raise FileExistsError(output)
     manifest = protocol.get("datasets", {}).get("anchors", {}).get("eligible_ids_manifest")
@@ -140,6 +197,7 @@ def score_discovery(
     *, batch_size: int = 1, allow_final_checkpoint: bool = False,
 ) -> None:
     """Score each cached anchor individually; report throughput and GPU peak memory."""
+    require_anchor_protocol(protocol)
     if output.exists():
         raise FileExistsError(output)
     if batch_size < 1:

@@ -176,7 +176,7 @@ def training_step(
 
 def training_update(
     *, student, teacher, target_batches: Sequence[Mapping[str, torch.Tensor]],
-    anchor_batch: Mapping[str, torch.Tensor] | None, optimizer,
+    anchor_batch: Mapping[str, torch.Tensor] | Sequence[Mapping[str, torch.Tensor]] | None, optimizer,
     kl_weight: float | None, kl_direction: str | None,
     kl_temperature: float | None, kl_reduction: str | None,
     scale_by_temperature_squared: bool | None, scheduler=None,
@@ -199,21 +199,45 @@ def training_update(
         weighted_loss_sum += float(target_loss.detach().cpu()) * count
     target_mean = weighted_loss_sum / target_tokens
     kl_value = None
-    if anchor_batch is not None:
+    anchor_tokens = 0
+    anchor_batches = (
+        [] if anchor_batch is None else
+        [anchor_batch] if isinstance(anchor_batch, Mapping) else
+        list(anchor_batch)
+    )
+    if anchor_batches:
         if teacher is None or kl_weight is None or kl_weight < 0 or kl_direction is None or kl_temperature is None or kl_reduction is None or scale_by_temperature_squared is None:
             raise ValueError("anchored step requires an explicit KL protocol and teacher")
-        with torch.no_grad():
-            teacher_logits = teacher(input_ids=anchor_batch["input_ids"], attention_mask=anchor_batch["attention_mask"]).logits
-        # Score the student's inference-time distributions, with LoRA dropout
-        # disabled. eval() does not block gradients through trainable adapters.
-        student.eval()
-        student_logits = student(input_ids=anchor_batch["input_ids"], attention_mask=anchor_batch["attention_mask"]).logits
-        kl_value = aligned_response_kl(
-            teacher_logits, student_logits, anchor_batch["response_mask"],
-            direction=kl_direction, temperature=kl_temperature,
-            reduction=kl_reduction, scale_by_temperature_squared=scale_by_temperature_squared,
+        counts = [int(batch["response_mask"].sum().item()) for batch in anchor_batches]
+        anchor_tokens = sum(counts)
+        if anchor_tokens <= 0:
+            raise ValueError("anchor batches contain no response tokens")
+        reduction_units = (
+            counts if kl_reduction == "token_mean" else
+            [int(batch["response_mask"].shape[0]) for batch in anchor_batches]
         )
-        (kl_weight * kl_value).backward()
+        total_units = sum(reduction_units)
+        weighted_kl = None
+        for batch, units in zip(anchor_batches, reduction_units):
+            with torch.no_grad():
+                teacher_logits = teacher(
+                    input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]
+                ).logits
+            # Score inference-time distributions with LoRA dropout disabled.
+            # eval() does not block gradients through trainable adapters.
+            student.eval()
+            student_logits = student(
+                input_ids=batch["input_ids"], attention_mask=batch["attention_mask"]
+            ).logits
+            batch_kl = aligned_response_kl(
+                teacher_logits, student_logits, batch["response_mask"],
+                direction=kl_direction, temperature=kl_temperature,
+                reduction=kl_reduction, scale_by_temperature_squared=scale_by_temperature_squared,
+            )
+            contribution = batch_kl * (units / total_units)
+            (kl_weight * contribution).backward()
+            weighted_kl = contribution.detach() if weighted_kl is None else weighted_kl + contribution.detach()
+        kl_value = weighted_kl
         student.train()
     if max_grad_norm is not None:
         if max_grad_norm < 0:
@@ -227,5 +251,5 @@ def training_update(
         "anchor_kl": float(kl_value.detach().cpu()) if kl_value is not None else 0.0,
         "total_loss": target_mean + (kl_weight * float(kl_value.detach().cpu()) if kl_value is not None else 0.0),
         "target_tokens": target_tokens,
-        "anchor_tokens": int(anchor_batch["response_mask"].sum().item()) if anchor_batch is not None else 0,
+        "anchor_tokens": anchor_tokens,
     }

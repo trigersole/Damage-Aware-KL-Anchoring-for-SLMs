@@ -44,6 +44,23 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(sum(x["selected_response_tokens"] for x in result["selected"]), 6)
         self.assertEqual(result["damage_weight"], 0.5)
 
+    def test_exact_prompt_and_token_budgets(self):
+        result = select_anchors(
+            self.pool, method="diversity", anchor_token_budget=6,
+            anchor_prompt_budget=3, seed=1,
+        )
+        self.assertEqual(result["selected_prompt_count"], 3)
+        self.assertEqual(result["anchor_prompt_budget"], 3)
+        self.assertEqual(
+            [row["selected_response_tokens"] for row in result["selected"]],
+            [2, 2, 2],
+        )
+        with self.assertRaisesRegex(ValueError, "at least one"):
+            select_anchors(
+                self.pool, method="diversity", anchor_token_budget=2,
+                anchor_prompt_budget=3, seed=1,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

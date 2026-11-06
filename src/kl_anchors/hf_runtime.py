@@ -23,7 +23,10 @@ def set_seed(seed: int) -> None:
 
 
 def render_chat_prompt(tokenizer, prompt: str, system_prompt: str = "") -> str:
-    if tokenizer.chat_template is None:
+    has_renderer = callable(getattr(tokenizer, "apply_chat_template", None))
+    if not has_renderer or (
+        hasattr(tokenizer, "chat_template") and tokenizer.chat_template is None
+    ):
         if system_prompt.strip():
             return f"{system_prompt.strip()}\n\n{prompt}"
         return prompt
@@ -46,6 +49,7 @@ def render_chat_prompt(tokenizer, prompt: str, system_prompt: str = "") -> str:
         tokenize=False,
         add_generation_prompt=True
     )
+
 
 def load_tokenizer(model: Mapping[str, str]):
     from transformers import AutoTokenizer

@@ -65,6 +65,7 @@ def select_anchors(
     anchor_token_budget: int,
     seed: int,
     damage_weight: float | None = None,
+    anchor_prompt_budget: int | None = None,
 ) -> Mapping[str, object]:
     """Choose anchors from one eligible pool and spend the exact token budget.
 
@@ -74,6 +75,11 @@ def select_anchors(
     can be shortened, so the *scored response-token* count is equal exactly.
     """
     _validate(candidates, anchor_token_budget, method)
+    if anchor_prompt_budget is not None:
+        if type(anchor_prompt_budget) is not int or not 1 <= anchor_prompt_budget <= len(candidates):
+            raise ValueError("anchor_prompt_budget must be a positive integer no larger than the pool")
+        if anchor_token_budget < anchor_prompt_budget:
+            raise ValueError("token budget must provide at least one scored token per selected prompt")
     if method == "damage_diverse":
         if damage_weight is None or not math.isfinite(damage_weight) or not 0 <= damage_weight <= 1:
             raise ValueError("damage_diverse requires an explicit damage_weight in [0, 1]")
@@ -100,17 +106,42 @@ def select_anchors(
 
     selected: list[dict[str, object]] = []
     remaining = anchor_token_budget
-    for rank, candidate in enumerate(ordered, start=1):
-        if remaining == 0:
-            break
-        used = min(candidate.response_token_count, remaining)
-        selected.append({
+    if anchor_prompt_budget is None:
+        for rank, candidate in enumerate(ordered, start=1):
+            if remaining == 0:
+                break
+            used = min(candidate.response_token_count, remaining)
+            selected.append({
+                "example_id": candidate.example_id,
+                "selection_rank": rank,
+                "available_response_tokens": candidate.response_token_count,
+                "selected_response_tokens": used,
+            })
+            remaining -= used
+    else:
+        # First include every ranked prompt, then allocate additional positions
+        # round-robin. This makes both the prompt count and scored-token budget
+        # exact without allowing long continuations to consume the whole budget.
+        chosen = ordered[:anchor_prompt_budget]
+        allocations = [1] * anchor_prompt_budget
+        remaining -= anchor_prompt_budget
+        while remaining:
+            progressed = False
+            for index, candidate in enumerate(chosen):
+                if remaining == 0:
+                    break
+                if allocations[index] < candidate.response_token_count:
+                    allocations[index] += 1
+                    remaining -= 1
+                    progressed = True
+            if not progressed:
+                raise ValueError("selected prompts contain fewer response tokens than the token budget")
+        selected = [{
             "example_id": candidate.example_id,
             "selection_rank": rank,
             "available_response_tokens": candidate.response_token_count,
-            "selected_response_tokens": used,
-        })
-        remaining -= used
+            "selected_response_tokens": allocations[rank - 1],
+        } for rank, candidate in enumerate(chosen, start=1)]
     if remaining:
         raise AssertionError("validated pool could not fill budget")
     return {
@@ -120,6 +151,7 @@ def select_anchors(
         "eligible_pool_sha256": pool_fingerprint(candidates),
         "eligible_prompt_count": len(candidates),
         "anchor_token_budget": anchor_token_budget,
+        "anchor_prompt_budget": anchor_prompt_budget,
         "selected_prompt_count": len(selected),
         "selected": selected,
     }

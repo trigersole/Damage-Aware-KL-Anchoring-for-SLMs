@@ -5,7 +5,9 @@ __pycache__/
 .uv-cache/
 data/processed/
 data/downloads/
+data/raw/
 results/runs/
+results/eval/
 artifacts/
 logs/
 *.safetensors

@@ -22,6 +22,12 @@ The exact protocol copied into a completed run directory is the authoritative re
 
 `protocol.study-02.json` is intentionally usable only for task-only `MODE=lora`. Its anchor budget, KL coefficient and mixing fields are zero and its scored-pool paths are unset. The remaining anchored-method choices in `../DECISIONS.md` must be approved before creating a separate anchored-study protocol. Do not insert convenient placeholder values merely to make `STAGE=all` run.
 
+`protocol.math10k-llama32-3b-diverse-kl-exploratory.json` records the approved
+2026-11-05 exploratory Math10K diversity-KL schedule: 128 prompts, 255 selected
+response positions, 64 positions every four updates, and KL coefficient 0.01.
+It uses only the locally available part-2 anchor shard and must not be presented
+as the final core GSM8K/Qwen comparison.
+
 Validate a protocol before submission:
 
 ```bash

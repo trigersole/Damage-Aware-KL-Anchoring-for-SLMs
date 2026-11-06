@@ -1,3 +1,4 @@
+import copy
 import unittest
 from types import SimpleNamespace
 
@@ -5,7 +6,7 @@ import torch
 
 from kl_anchors.training_core import (
     AnchorTokenScheduler, TokenizedExample, collate, target_causal_loss,
-    tokenize_completion, training_step,
+    tokenize_completion, training_step, training_update,
 )
 
 
@@ -65,6 +66,32 @@ class TrainingCoreTests(unittest.TestCase):
         self.assertTrue(torch.equal(before_teacher, teacher.head.weight))
         self.assertEqual(output["target_tokens"], 2)
         self.assertEqual(output["anchor_tokens"], 2)
+
+    def test_chunked_anchor_batches_preserve_total_exposure(self):
+        student = TinyModel()
+        batched_student = copy.deepcopy(student)
+        teacher = TinyModel()
+        target = collate([TokenizedExample("t", (1, 2), (False, True))], pad_token_id=0, device="cpu")
+        first = collate([TokenizedExample("a", (1, 3), (False, True))], pad_token_id=0, device="cpu")
+        second = collate([TokenizedExample("b", (1, 4, 5), (False, True, True))], pad_token_id=0, device="cpu")
+        output = training_update(
+            student=student, teacher=teacher, target_batches=[target],
+            anchor_batch=[first, second], optimizer=torch.optim.AdamW(student.parameters(), lr=0.01),
+            kl_weight=0.5, kl_direction="teacher_to_student", kl_temperature=1.0,
+            kl_reduction="token_mean", scale_by_temperature_squared=False,
+        )
+        batched = collate([
+            TokenizedExample("a", (1, 3), (False, True)),
+            TokenizedExample("b", (1, 4, 5), (False, True, True)),
+        ], pad_token_id=0, device="cpu")
+        batched_output = training_update(
+            student=batched_student, teacher=teacher, target_batches=[target],
+            anchor_batch=batched, optimizer=torch.optim.AdamW(batched_student.parameters(), lr=0.01),
+            kl_weight=0.5, kl_direction="teacher_to_student", kl_temperature=1.0,
+            kl_reduction="token_mean", scale_by_temperature_squared=False,
+        )
+        self.assertEqual(output["anchor_tokens"], 3)
+        self.assertAlmostEqual(output["anchor_kl"], batched_output["anchor_kl"], places=6)
 
     def test_target_loss_masks_prompt(self):
         logits = torch.zeros(1, 3, 10)
