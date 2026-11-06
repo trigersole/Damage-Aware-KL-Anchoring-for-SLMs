@@ -43,3 +43,23 @@ uv run --locked python -m kl_anchors.prepare_data \
 ```
 
 The split uses the same SHA-256 ranking rule and seed as the earlier 100-example carve-out, so those original validation IDs are a subset of the new validation set. The target-training and validation manifests have zero ID overlap. `configs/protocol.study-02.json` records the corresponding five-epoch, `2e-5` task-adaptation settings.
+
+## NTU MATH-10K KL study inputs
+
+The [NTU source snapshots](../experiments/ntu_math10k_kl/) use the
+9,919-row MATH-10K source from [LLM-Adapters at revision fe675038](https://github.com/AGI-Edgerunners/LLM-Adapters/blob/fe675038fb60d61b3fc03d98673d6d11d2bef4f9/ft-training_set/math_10k.json).
+The source SHA-256 is
+`0342d0d860ad8592b579329337c90e42eefd3d9f2898043140cbd120630418b8`.
+
+Download it as `data/raw/math10k/math_10k.json`. From a fresh checkout, run
+`PYTHONPATH=src python -m kl_anchors.prepare_math10k`. That creates the original
+seed-42 9,619/300 split in `data/processed/math10k/`. For each package that
+requires them, copy `train.jsonl` to `inputs/train.jsonl` and
+`validation.jsonl` to `inputs/validation_original_300.jsonl`. Check both hashes
+against the package's `files.sha256.json`. This reproduces the original
+validation overlap.
+
+The [upstream data license](https://github.com/AGI-Edgerunners/LLM-Adapters/blob/main/DATA_LICENSE)
+covers the compiled database and leaves individual item rights separate.
+The snapshot packages record the model and anchor sources and their licenses.
+Keep dataset files, caches and weights outside Git.

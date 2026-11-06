@@ -1,0 +1,8 @@
+{
+  "approved": true,
+  "date_singapore": "2026-11-05",
+  "source": "User response: Approve matched B protocol (recommended)",
+  "plan_sha256": "18eda11a5b976d342efff65b53d9f9064011c1d0bc46468338586dc9c5213d89",
+  "scope": "disposable8-update A40 check,then fresh matched full B training and frozen selected-model evaluation",
+  "automatic_submission": false
+}

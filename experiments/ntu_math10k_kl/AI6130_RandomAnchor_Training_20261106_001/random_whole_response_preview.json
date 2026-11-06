@@ -1,0 +1,784 @@
+{
+  "status": "whole_response_preview_only",
+  "method": "random",
+  "seed": 42,
+  "eligible_pool_sha256": "1e9e6d2978fe30499cf1779e084ff48bad7ea13d1e8f36ca987d1757c10e5230",
+  "eligible_prompt_count": 13743,
+  "anchor_prompt_budget": 128,
+  "selected_prompt_count": 128,
+  "anchor_token_budget": 22100,
+  "scored_position_policy": "all original cached response positions, including EOS when present",
+  "selected": [
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3175,\"instruction_context\"]",
+      "selection_rank": 1,
+      "available_response_tokens": 94,
+      "selected_response_tokens": 94
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6979,\"instruction_context\"]",
+      "selection_rank": 2,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",379,\"instruction_context\"]",
+      "selection_rank": 3,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5891,\"instruction_context\"]",
+      "selection_rank": 4,
+      "available_response_tokens": 37,
+      "selected_response_tokens": 37
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7365,\"instruction_context\"]",
+      "selection_rank": 5,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7219,\"instruction_context\"]",
+      "selection_rank": 6,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",10284,\"instruction_context\"]",
+      "selection_rank": 7,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12942,\"instruction_context\"]",
+      "selection_rank": 8,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",1779,\"instruction_context\"]",
+      "selection_rank": 9,
+      "available_response_tokens": 191,
+      "selected_response_tokens": 191
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",529,\"instruction_context\"]",
+      "selection_rank": 10,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",726,\"instruction_context\"]",
+      "selection_rank": 11,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2540,\"instruction_context\"]",
+      "selection_rank": 12,
+      "available_response_tokens": 25,
+      "selected_response_tokens": 25
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2951,\"instruction_context\"]",
+      "selection_rank": 13,
+      "available_response_tokens": 34,
+      "selected_response_tokens": 34
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3847,\"instruction_context\"]",
+      "selection_rank": 14,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5899,\"instruction_context\"]",
+      "selection_rank": 15,
+      "available_response_tokens": 98,
+      "selected_response_tokens": 98
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",66,\"instruction_context\"]",
+      "selection_rank": 16,
+      "available_response_tokens": 167,
+      "selected_response_tokens": 167
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",11725,\"instruction_context\"]",
+      "selection_rank": 17,
+      "available_response_tokens": 114,
+      "selected_response_tokens": 114
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9694,\"instruction_context\"]",
+      "selection_rank": 18,
+      "available_response_tokens": 27,
+      "selected_response_tokens": 27
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",852,\"instruction_context\"]",
+      "selection_rank": 19,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12736,\"instruction_context\"]",
+      "selection_rank": 20,
+      "available_response_tokens": 106,
+      "selected_response_tokens": 106
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5880,\"instruction_context\"]",
+      "selection_rank": 21,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8605,\"instruction_context\"]",
+      "selection_rank": 22,
+      "available_response_tokens": 64,
+      "selected_response_tokens": 64
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13035,\"instruction_context\"]",
+      "selection_rank": 23,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",837,\"instruction_context\"]",
+      "selection_rank": 24,
+      "available_response_tokens": 238,
+      "selected_response_tokens": 238
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",1400,\"instruction_context\"]",
+      "selection_rank": 25,
+      "available_response_tokens": 17,
+      "selected_response_tokens": 17
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7917,\"instruction_context\"]",
+      "selection_rank": 26,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5887,\"instruction_context\"]",
+      "selection_rank": 27,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5622,\"instruction_context\"]",
+      "selection_rank": 28,
+      "available_response_tokens": 111,
+      "selected_response_tokens": 111
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13396,\"instruction_context\"]",
+      "selection_rank": 29,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5168,\"instruction_context\"]",
+      "selection_rank": 30,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12706,\"instruction_context\"]",
+      "selection_rank": 31,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14343,\"instruction_context\"]",
+      "selection_rank": 32,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2811,\"instruction_context\"]",
+      "selection_rank": 33,
+      "available_response_tokens": 107,
+      "selected_response_tokens": 107
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5152,\"instruction_context\"]",
+      "selection_rank": 34,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4415,\"instruction_context\"]",
+      "selection_rank": 35,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3138,\"instruction_context\"]",
+      "selection_rank": 36,
+      "available_response_tokens": 46,
+      "selected_response_tokens": 46
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12925,\"instruction_context\"]",
+      "selection_rank": 37,
+      "available_response_tokens": 177,
+      "selected_response_tokens": 177
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",10739,\"instruction_context\"]",
+      "selection_rank": 38,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9611,\"instruction_context\"]",
+      "selection_rank": 39,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8724,\"instruction_context\"]",
+      "selection_rank": 40,
+      "available_response_tokens": 36,
+      "selected_response_tokens": 36
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8023,\"instruction_context\"]",
+      "selection_rank": 41,
+      "available_response_tokens": 39,
+      "selected_response_tokens": 39
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",664,\"instruction_context\"]",
+      "selection_rank": 42,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7826,\"instruction_context\"]",
+      "selection_rank": 43,
+      "available_response_tokens": 18,
+      "selected_response_tokens": 18
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8176,\"instruction_context\"]",
+      "selection_rank": 44,
+      "available_response_tokens": 37,
+      "selected_response_tokens": 37
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7496,\"instruction_context\"]",
+      "selection_rank": 45,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3616,\"instruction_context\"]",
+      "selection_rank": 46,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9033,\"instruction_context\"]",
+      "selection_rank": 47,
+      "available_response_tokens": 30,
+      "selected_response_tokens": 30
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",11732,\"instruction_context\"]",
+      "selection_rank": 48,
+      "available_response_tokens": 112,
+      "selected_response_tokens": 112
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14717,\"instruction_context\"]",
+      "selection_rank": 49,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3566,\"instruction_context\"]",
+      "selection_rank": 50,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13224,\"instruction_context\"]",
+      "selection_rank": 51,
+      "available_response_tokens": 131,
+      "selected_response_tokens": 131
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8151,\"instruction_context\"]",
+      "selection_rank": 52,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4807,\"instruction_context\"]",
+      "selection_rank": 53,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13060,\"instruction_context\"]",
+      "selection_rank": 54,
+      "available_response_tokens": 157,
+      "selected_response_tokens": 157
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5722,\"instruction_context\"]",
+      "selection_rank": 55,
+      "available_response_tokens": 89,
+      "selected_response_tokens": 89
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",501,\"instruction_context\"]",
+      "selection_rank": 56,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7260,\"instruction_context\"]",
+      "selection_rank": 57,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14604,\"instruction_context\"]",
+      "selection_rank": 58,
+      "available_response_tokens": 251,
+      "selected_response_tokens": 251
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9807,\"instruction_context\"]",
+      "selection_rank": 59,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13645,\"instruction_context\"]",
+      "selection_rank": 60,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5867,\"instruction_context\"]",
+      "selection_rank": 61,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4915,\"instruction_context\"]",
+      "selection_rank": 62,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9497,\"instruction_context\"]",
+      "selection_rank": 63,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8867,\"instruction_context\"]",
+      "selection_rank": 64,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",10696,\"instruction_context\"]",
+      "selection_rank": 65,
+      "available_response_tokens": 31,
+      "selected_response_tokens": 31
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7037,\"instruction_context\"]",
+      "selection_rank": 66,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4367,\"instruction_context\"]",
+      "selection_rank": 67,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2014,\"instruction_context\"]",
+      "selection_rank": 68,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",11458,\"instruction_context\"]",
+      "selection_rank": 69,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",11870,\"instruction_context\"]",
+      "selection_rank": 70,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7706,\"instruction_context\"]",
+      "selection_rank": 71,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14878,\"instruction_context\"]",
+      "selection_rank": 72,
+      "available_response_tokens": 22,
+      "selected_response_tokens": 22
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6213,\"instruction_context\"]",
+      "selection_rank": 73,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4869,\"instruction_context\"]",
+      "selection_rank": 74,
+      "available_response_tokens": 156,
+      "selected_response_tokens": 156
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6372,\"instruction_context\"]",
+      "selection_rank": 75,
+      "available_response_tokens": 196,
+      "selected_response_tokens": 196
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5135,\"instruction_context\"]",
+      "selection_rank": 76,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12555,\"instruction_context\"]",
+      "selection_rank": 77,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14101,\"instruction_context\"]",
+      "selection_rank": 78,
+      "available_response_tokens": 121,
+      "selected_response_tokens": 121
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",495,\"instruction_context\"]",
+      "selection_rank": 79,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14438,\"instruction_context\"]",
+      "selection_rank": 80,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9589,\"instruction_context\"]",
+      "selection_rank": 81,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12336,\"instruction_context\"]",
+      "selection_rank": 82,
+      "available_response_tokens": 72,
+      "selected_response_tokens": 72
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5181,\"instruction_context\"]",
+      "selection_rank": 83,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9571,\"instruction_context\"]",
+      "selection_rank": 84,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",256,\"instruction_context\"]",
+      "selection_rank": 85,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6058,\"instruction_context\"]",
+      "selection_rank": 86,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",64,\"instruction_context\"]",
+      "selection_rank": 87,
+      "available_response_tokens": 26,
+      "selected_response_tokens": 26
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",14694,\"instruction_context\"]",
+      "selection_rank": 88,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3633,\"instruction_context\"]",
+      "selection_rank": 89,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5111,\"instruction_context\"]",
+      "selection_rank": 90,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2063,\"instruction_context\"]",
+      "selection_rank": 91,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",10885,\"instruction_context\"]",
+      "selection_rank": 92,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4453,\"instruction_context\"]",
+      "selection_rank": 93,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4701,\"instruction_context\"]",
+      "selection_rank": 94,
+      "available_response_tokens": 91,
+      "selected_response_tokens": 91
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6387,\"instruction_context\"]",
+      "selection_rank": 95,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3443,\"instruction_context\"]",
+      "selection_rank": 96,
+      "available_response_tokens": 41,
+      "selected_response_tokens": 41
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9987,\"instruction_context\"]",
+      "selection_rank": 97,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4860,\"instruction_context\"]",
+      "selection_rank": 98,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7246,\"instruction_context\"]",
+      "selection_rank": 99,
+      "available_response_tokens": 115,
+      "selected_response_tokens": 115
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2124,\"instruction_context\"]",
+      "selection_rank": 100,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13700,\"instruction_context\"]",
+      "selection_rank": 101,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12973,\"instruction_context\"]",
+      "selection_rank": 102,
+      "available_response_tokens": 95,
+      "selected_response_tokens": 95
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7710,\"instruction_context\"]",
+      "selection_rank": 103,
+      "available_response_tokens": 131,
+      "selected_response_tokens": 131
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2857,\"instruction_context\"]",
+      "selection_rank": 104,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8099,\"instruction_context\"]",
+      "selection_rank": 105,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5171,\"instruction_context\"]",
+      "selection_rank": 106,
+      "available_response_tokens": 71,
+      "selected_response_tokens": 71
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",2205,\"instruction_context\"]",
+      "selection_rank": 107,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8891,\"instruction_context\"]",
+      "selection_rank": 108,
+      "available_response_tokens": 87,
+      "selected_response_tokens": 87
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4826,\"instruction_context\"]",
+      "selection_rank": 109,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7591,\"instruction_context\"]",
+      "selection_rank": 110,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3649,\"instruction_context\"]",
+      "selection_rank": 111,
+      "available_response_tokens": 108,
+      "selected_response_tokens": 108
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",7615,\"instruction_context\"]",
+      "selection_rank": 112,
+      "available_response_tokens": 65,
+      "selected_response_tokens": 65
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5993,\"instruction_context\"]",
+      "selection_rank": 113,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",4991,\"instruction_context\"]",
+      "selection_rank": 114,
+      "available_response_tokens": 94,
+      "selected_response_tokens": 94
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6262,\"instruction_context\"]",
+      "selection_rank": 115,
+      "available_response_tokens": 107,
+      "selected_response_tokens": 107
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5871,\"instruction_context\"]",
+      "selection_rank": 116,
+      "available_response_tokens": 122,
+      "selected_response_tokens": 122
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5395,\"instruction_context\"]",
+      "selection_rank": 117,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",13945,\"instruction_context\"]",
+      "selection_rank": 118,
+      "available_response_tokens": 105,
+      "selected_response_tokens": 105
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",6817,\"instruction_context\"]",
+      "selection_rank": 119,
+      "available_response_tokens": 149,
+      "selected_response_tokens": 149
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",10815,\"instruction_context\"]",
+      "selection_rank": 120,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9872,\"instruction_context\"]",
+      "selection_rank": 121,
+      "available_response_tokens": 34,
+      "selected_response_tokens": 34
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",3461,\"instruction_context\"]",
+      "selection_rank": 122,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",8668,\"instruction_context\"]",
+      "selection_rank": 123,
+      "available_response_tokens": 256,
+      "selected_response_tokens": 256
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12155,\"instruction_context\"]",
+      "selection_rank": 124,
+      "available_response_tokens": 45,
+      "selected_response_tokens": 45
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5045,\"instruction_context\"]",
+      "selection_rank": 125,
+      "available_response_tokens": 19,
+      "selected_response_tokens": 19
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",12955,\"instruction_context\"]",
+      "selection_rank": 126,
+      "available_response_tokens": 126,
+      "selected_response_tokens": 126
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",9525,\"instruction_context\"]",
+      "selection_rank": 127,
+      "available_response_tokens": 150,
+      "selected_response_tokens": 150
+    },
+    {
+      "example_id": "[\"databricks/databricks-dolly-15k\",\"default\",\"bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a\",\"train\",5688,\"instruction_context\"]",
+      "selection_rank": 128,
+      "available_response_tokens": 2,
+      "selected_response_tokens": 2
+    }
+  ],
+  "training_authorized": false,
+  "note": "Pool/selection/scoring-position recipe requires team agreement before final export or training; no255-position clipping inferred.",
+  "teacher_cache_file_sha256": "34df0ac34eda0d79295be3bbfcff3cb79b28dfda3c4318715f40b1ca57dc4dcd"
+}

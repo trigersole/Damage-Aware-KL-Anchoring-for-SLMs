@@ -1,0 +1,104 @@
+{
+  "config": {
+    "schema_version": 1,
+    "experiment_id": "llama32-semantic-calibration-20261027-001",
+    "scope": "Input-only semantic calibration; no final thresholds, exclusions, eligible pool, vulnerability, generation or training",
+    "default_source_home_relative": "AI6130_Llama32_AnchorPreflight_20261027_001/results/llama32-anchor-preflight-20261027-001",
+    "source": {
+      "fingerprint": "0c475cb732ba898769c3cf42491a2ab5752a55defac2213bb89f4c9644e6950d",
+      "review_bundle_sha256": "2c45702d5c942a191cfaf0bfd1c481cd19613bfb1599ba355efce9454a641aea",
+      "identity_sha256": "a5a640202faed414cf30bdfd4bef4a6a234c308631e0b48ff151d5c915aeed98",
+      "stages": {
+        "inputs": {
+          "fingerprint": "0c475cb732ba898769c3cf42491a2ab5752a55defac2213bb89f4c9644e6950d",
+          "files": {
+            "candidates.jsonl": "a7ca4c883755b63b9eb1373e7de06a8f4304e2f3f306960a9407cb9e1228b7ff",
+            "data_config.json": "67d470bf86e05da9e24cc314293ea979510cb0d7243963468655466f4e1e7add",
+            "heldout_inputs.jsonl": "6ddc7467221f6a013d9d866dcf06eae018103685ceacba38b473683c8fd48ede",
+            "inputs_manifest.json": "242274ebb618abc134a3d18ac96c8de3ca6f2226c6cce83ff4861fd2c98790ec"
+          }
+        },
+        "review": {
+          "fingerprint": "0c475cb732ba898769c3cf42491a2ab5752a55defac2213bb89f4c9644e6950d",
+          "files": {
+            "candidates.jsonl": "a7ca4c883755b63b9eb1373e7de06a8f4304e2f3f306960a9407cb9e1228b7ff",
+            "data_config.json": "3440d295c98503ef1d2dfd0cb2cfb4dc59f85010b8c895b77eb0354406f593b4",
+            "hard_exclusions.jsonl": "2b8f17a2a6855e9dd914dbd5adfca5354e8654579134a604f40dd61e7b44be2b",
+            "heldout_inputs.jsonl": "6ddc7467221f6a013d9d866dcf06eae018103685ceacba38b473683c8fd48ede",
+            "input_provenance.json": "db51cb856033f02bb69516f4620800d3bc4e5d5eaa951c7721c5bcd6ae04f02e",
+            "review_answers.template.jsonl": "15aeb9fc683335c66f12a492855bf5f7773cbfb1085a6dfa30008fe5fe959ef1",
+            "review_flags.jsonl": "48a123e606669adcc45f8501fa5535c180d8233a767c9fd193d45114aa9813bf",
+            "review_manifest.json": "56fec8974e2f91df1cb83d95a2ad4a857f435a90d2732b2bd8cb37be907a64a1",
+            "semantic_summary.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "summary": {
+          "fingerprint": "0c475cb732ba898769c3cf42491a2ab5752a55defac2213bb89f4c9644e6950d",
+          "files": {
+            "REPORT.md": "cebf0c788b1f1bb12592e611ec1064830122447878da7e7aa6eb156ccb0c2749",
+            "examples.json": "4659e16d0042b66ce0588f45070ab549a29c29bf70d49c29bec20380f228f6d9",
+            "summary.json": "0e59100d5363e518eb7a1db4a770ad8846a98aca25e989b02dafad74e5f57fc1"
+          }
+        }
+      }
+    },
+    "expected": {
+      "all_candidates": 15011,
+      "hard_excluded": 204,
+      "active_candidates": 14807,
+      "input_views": 121462,
+      "lexical_pairs": 443,
+      "spot_checks": 50
+    },
+    "encoder": {
+      "repo_id": "BAAI/bge-m3",
+      "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+      "max_tokens": 8192,
+      "dimension": 1024,
+      "pooling": "CLS",
+      "prefix": "",
+      "dtype": "float32",
+      "normalize_embeddings": true,
+      "batch_size": 4,
+      "block_size": 128,
+      "attention": "sdpa"
+    },
+    "length_tokenizer": {
+      "repo_id": "meta-llama/Llama-3.2-3B",
+      "revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "add_special_tokens": false,
+      "scope": "Raw prompt only; not approval of any future context budget"
+    },
+    "length_batch_size": 128,
+    "length_block_size": 2048,
+    "neighbors": {
+      "query_chunk": 64,
+      "reference_chunk": 8192,
+      "raw_reference_k": 32,
+      "source_item_k": 5,
+      "candidate_k": 5,
+      "max_views_per_source_item": 6,
+      "similarity": "Dot product of normalized float32 dense vectors (cosine)",
+      "tie_break": "Ascending canonical reference index for exactly equal saved scores"
+    },
+    "final_thresholds": null,
+    "semantic_screen_complete": false,
+    "final_pool_created": false,
+    "seed": 42,
+    "limitations": [
+      "Nearest neighbors are calibration examples, not a complete semantic-overlap decision.",
+      "Full raw text; no automatic truncation, chunking or length exclusions. Stop before encoding if any encoder input exceeds 8192 tokens.",
+      "Only byte-identical texts share embeddings; all original IDs/views remain mapped.",
+      "No benchmark labels, responses, accuracy or forgetting gaps enter this job.",
+      "BGE approval covers filtering calibration only, not final diversity selection.",
+      "Multiple allocated GPUs/software versions can introduce small floating-point differences; runtime provenance is saved per block."
+    ]
+  },
+  "source_sha256": {
+    "calibration.py": "b37dfb50684a217074728371fec048a96bff502b2a32155a49497a4eed7ffa5c",
+    "calibration_core.py": "05d47fb90fdbe68f6ed3a940f5d1094ba9ab4c3a58d2ee490cd4e02480d22147",
+    "encoder_backend.py": "b73202141afbee0910eb95da4ad8e7ddd4806bb8e3dfd897aecb97c9609e32ec",
+    "io_utils.py": "9366857003f8e23a8c78b7dfc6cee7d835f3a4b40f73f481361e811ae94da4e2",
+    "run_calibration.sbatch": "bfa41992f6e9664d70ceb73fceeca6e0618d104aa123e2ca4ca86a638dafa244"
+  }
+}

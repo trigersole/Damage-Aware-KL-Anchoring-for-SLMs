@@ -1,0 +1,26 @@
+{
+  "experiment": "AI6130_step5_256_full_anchor_pool",
+  "code_commit": "ab02b28be9f491c1cd8fb4cc025a91b26455a779",
+  "code_sha256": {
+    "src/kl_anchors/anchor_pipeline.py": "6bc9303bfad2daa54289812c44d24254b2db76b1617f1db28d6641463a07e290",
+    "src/kl_anchors/kl.py": "f5e0067271026466b4fab8fe7c63c7090c5382528020ac8729f3657e256c8981",
+    "src/kl_anchors/hf_runtime.py": "653a15a628a105f3f9c6c4b94eb4d165839c7d3425025f80d8a55a7885c4d107",
+    "src/kl_anchors/training_core.py": "de881d10621ec7c4c8750328fcd55a190cacd7f5e11692f9e3e092ea0bd58f14"
+  },
+  "source_anchor_file": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/code_git_ab02b28b/data/anchors/eligible_anchors.jsonl",
+  "source_anchor_sha256": "8faa3a2e6cac9958d47ac69d724e5ffcd2bdb37f96c86abe1f6b9dc557168391",
+  "input_anchor_file": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/experiment_256_v1/inputs/eligible_anchors.jsonl",
+  "input_anchor_sha256": "8faa3a2e6cac9958d47ac69d724e5ffcd2bdb37f96c86abe1f6b9dc557168391",
+  "input_anchor_count": 13769,
+  "prompt_format": "Question: {question}\nAnswer:",
+  "teacher_cap": 256,
+  "max_sequence_tokens": 2048,
+  "seed": 42,
+  "skip_rule": "len(prompt_ids) + 256 > 2048; no truncation",
+  "adapter": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/experiment_256_v1/model/math10k-llama32-3b-full-01/checkpoints/step_000600",
+  "adapter_sha256": "223b345f349aba7dd8bc6987237a2a6e8c8a268baf5955d1a721e0eea9c31861",
+  "saved_checkpoint_protocol_sha256": "762a262974cd3a20e2def1d61f585447b8971f243782af87c69af87f331195bd",
+  "protocol_sha256": "6f2f92774ddc030b01efd922fc275377e165ffd0c04b7dfd761247093301e8fd",
+  "process": "2 stages; cache, then teacher-vs-step600 response-token mean KL",
+  "max_gpu_session_seconds": 19800
+}

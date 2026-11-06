@@ -110,3 +110,7 @@ must be recorded before new anchored runs.
 `propose --export-auto-included` optionally saves an inspection preview of
 automatically passed, unflagged candidates. Training continues to use only the
 finalized pool. See the [PowerShell walkthrough](docs/kl_filtering_new.md).
+
+## NTU MATH-10K KL experiments
+
+[NTU source snapshots and reproduction guide](experiments/ntu_math10k_kl/)

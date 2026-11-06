@@ -1,0 +1,15 @@
+{
+  "variant": "B",
+  "approved": true,
+  "approval_date_singapore": "2026-11-05",
+  "approval": "Hemanth: Prepare >8-token Version B selection (recommended); data-only, no training",
+  "count": 128,
+  "response_token_count_greater_than": 8,
+  "EOS_included": true,
+  "ranking": "descending_existing_KL",
+  "tie_break": "example_id_ascending",
+  "minimum_KL": null,
+  "teacher_regeneration": false,
+  "KL_recomputation": false,
+  "training_authorized": false
+}

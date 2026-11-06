@@ -1,0 +1,9 @@
+{
+  "reviewed_source_directory": "artifacts/llama32-evaluator-differences-2026-10-26-001/upstream",
+  "files": {
+    "evaluate.py": "bbeffed26a8ee3ffab3672f6af056dc44e14e8c5349063fde56c60cbb2786b90",
+    "evaluate_math10k.py": "0ca0d01e5c254e4377e6d8f5dac12c9df010faf84ae50b33c192e64b16adfbe5",
+    "metrics.py": "3f63821c384168aaaa6c0a36edfa1437258e23c110e5d4e30d5d264445c0f453"
+  },
+  "policy": "Unchanged reviewed evaluator/backend/parser;new code supplies source guards,data integrity and resumable orchestration"
+}

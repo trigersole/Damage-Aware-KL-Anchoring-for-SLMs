@@ -1,0 +1,143 @@
+{
+  "plan_id": "damage-B-gt8-lambda001-full3ep-20261105-001",
+  "status": "approved_for_separate_execution_package_no_automatic_submission",
+  "base": {
+    "repo_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "initialization": "fresh untouched base plus fresh LoRA;never resume A or disposable B smoke",
+  "selected_anchors": {
+    "prompts": 128,
+    "unique_scored_response_positions": 1749,
+    "response_rule": "cached response_token_count > 8;EOS counted when present",
+    "selection_completion_sha256": "7977941224cb902a60fd6e7200226317417b4c13a349fb11589171c7db0c37d6",
+    "selected_anchors_sha256": "997b8169fd819720e8248797cebeb330d73b97763761f591166c71d6bcb6b71c",
+    "selected_cache_sha256": "6000d663be41c9bb3617e9033b0bc9374a52bc486e451f53ca3af5d25c69c5a3"
+  },
+  "data": {
+    "training_examples": 9619,
+    "validation_examples": 300,
+    "validation_branch": "original friend300,known overlap disclosed",
+    "changed_inputs": false
+  },
+  "seed": 42,
+  "lora": {
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0.0,
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "epochs": 3,
+    "updates": 3609,
+    "question_presentations": 28857,
+    "per_device_batch": 1,
+    "gradient_accumulation": 8,
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "original linear3609-update",
+    "warmup_updates": 361,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "max_grad_norm": 1.0,
+    "max_sequence_tokens": 2048,
+    "gradient_checkpointing": false
+  },
+  "kl": {
+    "coefficient": 0.01,
+    "direction": "teacher_to_student",
+    "temperature": 1.0,
+    "temperature_squared_scaling": true,
+    "mask": "response_tokens including generated EOS",
+    "normalization": "token_mean",
+    "positions_per_event": 64,
+    "every_math_updates": 4,
+    "events": 902,
+    "total_scored_positions": 57728,
+    "anchor_microbatch_size": 1
+  },
+  "validation": {
+    "updates": [
+      0,
+      300,
+      600,
+      900,
+      1200,
+      1500,
+      1800,
+      2100,
+      2400,
+      2700,
+      3000,
+      3300,
+      3600,
+      3609
+    ],
+    "metric": "original300 response-token-weighted reference loss including EOS",
+    "checkpoint_rule": "minimum trained-checkpoint validation loss;exact tie earlier update",
+    "final_tests_select_checkpoint": false
+  },
+  "hardware_check": {
+    "disposable_training_updates": 8,
+    "math_presentations": 64,
+    "scored_anchor_positions": 128,
+    "checks": [
+      "finite math/KL/gradient values",
+      "exact64-position masks on events4and8",
+      "frozen teacher and trainable adapter only",
+      "model/optimizer/scheduler/RNG/target and anchor cursor recovery",
+      "record GPU/software/peak memory and time"
+    ],
+    "restart_full_run_from_untouched_base_after_pass": true,
+    "actual_GPU_check_done": false
+  },
+  "post_training_evaluation": {
+    "benchmarks": [
+      "gsm8k",
+      "arc_easy",
+      "arc_challenge",
+      "openbookqa",
+      "social_iqa"
+    ],
+    "same_frozen_profile_as_A": true,
+    "gsm8k_max_new_tokens": 256,
+    "protocol": "reviewed zero-shot Q/A,no added BOS,greedy/nativeEOS;MC summed leading-space label likelihood",
+    "reuse_verified_base_task_only_A_outputs": true,
+    "no_new_test_tuning": true
+  },
+  "execution": {
+    "partition": "MGPU-TC2",
+    "hardware": "matching NVIDIA A40",
+    "one_running_allocation": true,
+    "job_limit_hours": 6,
+    "pause_budget_hours": 5.5,
+    "new_output_id": true,
+    "preserve_A_and_all_prior_results": true
+  },
+  "notes": [
+    "B is a response-length ablation,not a correctness-filtered dataset",
+    "Some cached B teacher responses are wrong or unhelpful;preserve the approved selection and disclose this",
+    "EOS share and prompt mix differ;the ablation does not isolate factual quality",
+    "A and B match total scored-position exposure,not unique positions or per-prompt repeats",
+    "No further coefficient search,quality exclusions,teacher regeneration,cap changes or extra seeds in this plan",
+    "Other team selector token budgets and multi-seed evidence remain separate open work"
+  ],
+  "approval_scope": "disposable8-update A40 check,then fresh matched full B training and frozen selected-model evaluation",
+  "paths": {
+    "selection": "/home/msai/hemanth005/AI6130_DamageB_Top128_GT8_20261105_001/results/damage-B-top128-gt8-20261105-001",
+    "a_calibration": "/home/msai/hemanth005/AI6130_DamageA_KLCalibration_20261104_001",
+    "a_evaluation": "/home/msai/hemanth005/AI6130_DamageA_Evaluation_20261105_001",
+    "a_evaluation_output": "results/damage-A-step2400-friend256-five-20261105-001"
+  }
+}

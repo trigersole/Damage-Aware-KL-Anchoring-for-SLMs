@@ -1,0 +1,23 @@
+{
+  "experiment_id": "damage-diverse-bge-rankfusion-20261105-001",
+  "candidate_count": 13743,
+  "count": 128,
+  "seed": 42,
+  "damage_weight": 0.5,
+  "diversity_weight": 0.5,
+  "response_length_filter": null,
+  "additional_quality_filter": null,
+  "encoder_repo": "BAAI/bge-m3",
+  "encoder_revision": "5617a9f61b028005a4858fdac845db406aefb181",
+  "algorithm": "farthest_first",
+  "ranking_dtype": "float64",
+  "tie_tolerance": 1e-12,
+  "teacher_regeneration": false,
+  "training_authorized": false,
+  "pool_ID_response_length_fingerprint": "1e9e6d2978fe30499cf1779e084ff48bad7ea13d1e8f36ca987d1757c10e5230",
+  "calibration_fingerprint": "8e23dba6ac83a2578764e88c43f18f1355ee4da85571d3d4c007067bb2d24980",
+  "calibration_home_relative": "AI6130_Llama32_SemanticCalibration_20261027_001/results/llama32-semantic-calibration-20261027-001",
+  "original_teacher_cache_sha256": "34df0ac34eda0d79295be3bbfcff3cb79b28dfda3c4318715f40b1ca57dc4dcd",
+  "original_scores_sha256": "3e04239c585cf92915150417e4b824c1200eaa0af0ba3bde3f63a4c42672a3f3",
+  "canonical_ranking_digest": "c6849eb8a8a2af3962252d414dea6a7730a3d5821cdf3e0cb89951d11e2ea98d"
+}

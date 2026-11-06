@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-04",
+  "scope": "Exploratory three-condition damage-A calibration only",
+  "user_approval": "600 updates each \u2014 1,800 total (recommended)",
+  "conditions": {
+    "task_only": 0.0,
+    "damage_001": 0.01,
+    "damage_005": 0.05
+  },
+  "steps": 600,
+  "smoke_steps": 8,
+  "anchor_every": 4,
+  "anchor_positions": 64,
+  "validation_steps": [
+    0,
+    300,
+    600
+  ],
+  "future_scheduler_steps": 3609,
+  "warmup_steps": 361,
+  "training_launch_approved_after_matching_hardware_smoke": true,
+  "final_study_coefficient_selected": false
+}

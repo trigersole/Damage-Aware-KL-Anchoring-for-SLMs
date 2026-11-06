@@ -1,0 +1,162 @@
+{
+  "plan_id": "damage-diverse-lambda001-full3ep-20261105-001",
+  "status": "approved_matched_execution_no_automatic_submission",
+  "base": {
+    "repo_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "initialization": "Independently fresh untouched base plus fresh LoRA;never import A/B/discovery/smoke adapter or recovery state",
+  "selected_anchors": {
+    "prompts": 128,
+    "unique_scored_response_positions": 1453,
+    "response_rule": "Approved50:50 normalized damage/diversity rank fusion over all13743;no additional length/quality filter;whole cached continuations/EOS preserved",
+    "selection_identity_sha256": "439a7f1a841ec1a5bedcb527bc4c63e21b01ee1d063621299d46f523535ea129",
+    "exports_receipt_sha256": "3d85ffced14e432ce9b5ea0779c6313b43f9d32bf0f37e93ccc8638a90ac5430",
+    "ranking_receipt_sha256": "d3fcacbcb10cec16614bcb1d9ce039c7a8550e1e957539d7b636b41940eca55a",
+    "selected_anchors_sha256": "64cad4561a587890b300047c6cb6bbfaf0b0fc5a9d72665bbcc391a14ff34c20",
+    "selected_cache_sha256": "621a0efd7ae413f948cb470bf2060b0b4afc3c5737f9565b3d8598b8864dd2fa",
+    "selection_manifests_sha256": "02edcc5075abcbb53012399edf74b59acfeb9b772683ec5e67f7a0e72dd90888",
+    "known_data_observations": {
+      "EOS_only": 6,
+      "two_token_responses": 56,
+      "bare_ABCD": 49,
+      "Tesrt_prompt_rows": [
+        31
+      ]
+    },
+    "data_audit_passed_groups": 45,
+    "data_audit": "artifacts/damage-diversity-selection-2026-11-05-001/downloaded-review-51426/audit.json"
+  },
+  "data": {
+    "training_examples": 9619,
+    "validation_examples": 300,
+    "validation_branch": "original friend300,known overlap disclosed",
+    "changed_inputs": false
+  },
+  "seed": 42,
+  "lora": {
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0.0,
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "epochs": 3,
+    "updates": 3609,
+    "question_presentations": 28857,
+    "per_device_batch": 1,
+    "gradient_accumulation": 8,
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "original linear3609-update",
+    "warmup_updates": 361,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "max_grad_norm": 1.0,
+    "max_sequence_tokens": 2048,
+    "gradient_checkpointing": false
+  },
+  "kl": {
+    "coefficient": 0.01,
+    "direction": "teacher_to_student",
+    "temperature": 1.0,
+    "temperature_squared_scaling": true,
+    "mask": "response_tokens including generated EOS",
+    "normalization": "token_mean",
+    "positions_per_event": 64,
+    "every_math_updates": 4,
+    "events": 902,
+    "total_scored_positions": 57728,
+    "anchor_microbatch_size": 1
+  },
+  "validation": {
+    "updates": [
+      0,
+      300,
+      600,
+      900,
+      1200,
+      1500,
+      1800,
+      2100,
+      2400,
+      2700,
+      3000,
+      3300,
+      3600,
+      3609
+    ],
+    "metric": "original300 response-token-weighted reference loss including EOS",
+    "checkpoint_rule": "minimum trained-checkpoint validation loss;exact tie earlier update",
+    "final_tests_select_checkpoint": false
+  },
+  "hardware_check": {
+    "disposable_training_updates": 8,
+    "math_presentations": 64,
+    "scored_anchor_positions": 128,
+    "checks": [
+      "finite math/KL/gradient values",
+      "exact64-position masks on events4and8",
+      "frozen teacher and trainable adapter only",
+      "model/optimizer/scheduler/RNG/target and anchor cursor recovery",
+      "record GPU/software/peak memory and time",
+      "Include one native-EOS-only anchor plus longest selected prompt/response fixtures;verify aligned1-token response masking"
+    ],
+    "restart_full_run_from_untouched_base_after_pass": true,
+    "actual_GPU_check_done": false
+  },
+  "post_training_evaluation": {
+    "benchmarks": [
+      "gsm8k",
+      "arc_easy",
+      "arc_challenge",
+      "openbookqa",
+      "social_iqa"
+    ],
+    "same_frozen_profile_as_A": true,
+    "gsm8k_max_new_tokens": 256,
+    "protocol": "reviewed zero-shot Q/A,no added BOS,greedy/nativeEOS;MC summed leading-space label likelihood",
+    "reuse_verified_base_task_only_A_outputs": true,
+    "no_new_test_tuning": true,
+    "new_mode": "damage_diverse",
+    "B_comparison": "Preserve/reuse completed B scores;download raw B predictions before claiming independent per-item B comparison"
+  },
+  "execution": {
+    "partition": "MGPU-TC2",
+    "hardware": "matching NVIDIA A40",
+    "one_running_allocation": true,
+    "job_limit_hours": 6,
+    "pause_budget_hours": 5.5,
+    "new_output_id": true,
+    "preserve_A_and_all_prior_results": true,
+    "host_RAM_request": "30G within current QoS cap",
+    "automatic_submission": false
+  },
+  "notes": [
+    "All approved128 combined prompts/teacher responses remain unchanged,including6EOS-only,49bare labels andoneTesrt input;soft full-vocabulary KL is not supervised factual answer training.",
+    "No claim teacher correctness or mechanistic knowledge protection.",
+    "Same64 scored positions every4 updates/57728 full exposure asA/B;1453 unique positions are an inventory,not the repeated budget.",
+    "BGE diversity differs from teammateMiniLM;use matching BGE diversity-only control or disclose encoder confounding.",
+    "Preserve original300 overlap disclosure and one-seed limits;no test-based tuning.",
+    "No teacher regeneration,quality filter,extra epochs,coefficient search or imported adapters.",
+    "Preparation of a separately isolated source package follows agreement on this concrete research budget;actual GPU smoke/full-training/evaluation have not run."
+  ],
+  "approval_scope": "User approved disposable8-update A40 smoke/recovery,fresh matched3609-update combined training,and fixed selected-model five-benchmark evaluation;no automatic submission",
+  "paths": {
+    "selection": "/home/msai/hemanth005/AI6130_DamageDiverse_Selection_20261105_001/results/damage-diverse-bge-rankfusion-20261105-001",
+    "a_calibration": "/home/msai/hemanth005/AI6130_DamageA_KLCalibration_20261104_001",
+    "a_evaluation": "/home/msai/hemanth005/AI6130_DamageA_Evaluation_20261105_001",
+    "a_evaluation_output": "results/damage-A-step2400-friend256-five-20261105-001"
+  }
+}

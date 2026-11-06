@@ -1,0 +1,150 @@
+{
+  "plan_id": "random-whole128-lambda001-full3ep-20261106-001",
+  "status": "approved_matched_execution_no_automatic_submission",
+  "base": {
+    "repo_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "initialization": "Independently fresh untouched base plus fresh LoRA;never import A/B/discovery/smoke adapter or recovery state",
+  "selected_anchors": {
+    "method": "random",
+    "prompt_count": 128,
+    "seed": 42,
+    "pool_count": 13743,
+    "pool_sha256": "1e9e6d2978fe30499cf1779e084ff48bad7ea13d1e8f36ca987d1757c10e5230",
+    "teacher_cache_sha256": "34df0ac34eda0d79295be3bbfcff3cb79b28dfda3c4318715f40b1ca57dc4dcd",
+    "manifest_sha256": "4dc84a4f71e4123d7791852315d0f7d9f54904965d095b992993cf9268434b5f",
+    "unique_response_positions": 22100,
+    "mask": "whole cached teacher responses including EOS when present",
+    "native_eos_count": 61,
+    "generation_cap_count": 67
+  },
+  "data": {
+    "training_examples": 9619,
+    "validation_examples": 300,
+    "validation_branch": "original friend300,known overlap disclosed",
+    "changed_inputs": false
+  },
+  "seed": 42,
+  "lora": {
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0.0,
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "epochs": 3,
+    "updates": 3609,
+    "question_presentations": 28857,
+    "per_device_batch": 1,
+    "gradient_accumulation": 8,
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "original linear3609-update",
+    "warmup_updates": 361,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "max_grad_norm": 1.0,
+    "max_sequence_tokens": 2048,
+    "gradient_checkpointing": false
+  },
+  "kl": {
+    "coefficient": 0.01,
+    "direction": "teacher_to_student",
+    "temperature": 1.0,
+    "temperature_squared_scaling": true,
+    "mask": "response_tokens including generated EOS",
+    "normalization": "token_mean",
+    "positions_per_event": 64,
+    "every_math_updates": 4,
+    "events": 902,
+    "total_scored_positions": 57728,
+    "anchor_microbatch_size": 1
+  },
+  "validation": {
+    "updates": [
+      0,
+      300,
+      600,
+      900,
+      1200,
+      1500,
+      1800,
+      2100,
+      2400,
+      2700,
+      3000,
+      3300,
+      3600,
+      3609
+    ],
+    "metric": "original300 response-token-weighted reference loss including EOS",
+    "checkpoint_rule": "minimum trained-checkpoint validation loss;exact tie earlier update",
+    "final_tests_select_checkpoint": false
+  },
+  "hardware_check": {
+    "disposable_training_updates": 8,
+    "math_presentations": 64,
+    "scored_anchor_positions": 128,
+    "checks": [
+      "finite math/KL/gradient values",
+      "exact64-position masks on events4and8",
+      "frozen teacher and trainable adapter only",
+      "model/optimizer/scheduler/RNG/target and anchor cursor recovery",
+      "record GPU/software/peak memory and time",
+      "Use the longest selected complete input to stress the whole-sequence forward pass with the matched 64 scored positions per KL event."
+    ],
+    "restart_full_run_from_untouched_base_after_pass": true,
+    "actual_GPU_check_done": false
+  },
+  "post_training_evaluation": {
+    "benchmarks": [
+      "gsm8k",
+      "arc_easy",
+      "arc_challenge",
+      "openbookqa",
+      "social_iqa"
+    ],
+    "same_frozen_profile_as_A": true,
+    "gsm8k_max_new_tokens": 256,
+    "protocol": "reviewed zero-shot Q/A,no added BOS,greedy/nativeEOS;MC summed leading-space label likelihood",
+    "reuse_verified_base_task_only_A_outputs": true,
+    "no_new_test_tuning": true,
+    "new_mode": "random"
+  },
+  "execution": {
+    "partition": "MGPU-TC2",
+    "hardware": "matching NVIDIA A40",
+    "one_running_allocation": true,
+    "job_limit_hours": 6,
+    "pause_budget_hours": 5.5,
+    "new_output_id": true,
+    "preserve_A_and_all_prior_results": true,
+    "host_RAM_request": "30G within current QoS cap",
+    "automatic_submission": false
+  },
+  "notes": [
+    "Random selection is reproduced from the shared teacher-cache IDs and response lengths, using sorted IDs and a seeded shuffle.",
+    "The 22,100 unique response positions are an inventory. The matched full-trajectory training budget is 57,728 repeated exposures.",
+    "67 responses hit the frozen 256-token generation cap. The selected responses are kept as cached.",
+    "One seed and original300 training overlap limit the comparison."
+  ],
+  "approval_scope": "Source preparation for the supplied whole-response Random set. Execution approval is a separate record.",
+  "paths": {
+    "a_calibration": "/home/msai/hemanth005/AI6130_DamageA_KLCalibration_20261104_001",
+    "a_evaluation": "/home/msai/hemanth005/AI6130_DamageA_Evaluation_20261105_001",
+    "a_evaluation_output": "results/damage-A-step2400-friend256-five-20261105-001",
+    "teacher_cache": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/experiment_256_v1/full/teacher_cache.jsonl"
+  }
+}

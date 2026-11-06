@@ -1,0 +1,35 @@
+{
+  "status": "complete",
+  "committed_updates": 600,
+  "validation_history": [
+    {
+      "step": 0,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.7781665725743999,
+      "selected_set_anchor_KL": 0.0,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 300,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.4311630382529025,
+      "selected_set_anchor_KL": 0.06779203401768909,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 600,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.4026650336146966,
+      "selected_set_anchor_KL": 0.052157240938030036,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    }
+  ],
+  "lambda": 0.01,
+  "anchor_tokens_seen": 9600
+}

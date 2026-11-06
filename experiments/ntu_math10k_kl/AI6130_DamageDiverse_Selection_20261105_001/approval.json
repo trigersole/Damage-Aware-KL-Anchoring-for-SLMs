@@ -1,0 +1,8 @@
+{
+  "date_singapore": "2026-11-05",
+  "user_reply": "Approve this selection recipe",
+  "selection_approved": true,
+  "training_approved": false,
+  "scope": "Verified full-text pinnedBGE reuse;same13743;seed42 farthest-first;50:50 normalized ranks;128whole prompts with original responses;no extra filter;matching diversity-only128 export",
+  "question": "AGENTS.md requires confirmation before resolving open selection settings. Approve this data-only recipe: use the same13,743 cached candidates;reuse our verified full-text BGE-M3 embeddings;rank diversity with deterministic farthest-first,seed42;combine normalized damage and diversity ranks with equal50:50 weights;select128 whole prompts with their original teacher responses and no extra length filter? Also export the matching diversity-only128 for comparison. This selects data only;it does not start training."
+}

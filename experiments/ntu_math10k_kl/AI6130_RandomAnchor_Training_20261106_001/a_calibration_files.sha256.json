@@ -1,0 +1,19 @@
+{
+  "DATA_AND_LICENSES.md": "4bed51844a5006e00c668ac4c6097aefab95495087c8d14b0e5d585282a8ff03",
+  "README.md": "df3296b76a89acbf370dbbbc5b690b02f080d104dc2ba70624ac3cfc1413d7d4",
+  "approval.json": "7c581754fc466a4e74a94167d4c0e8c9387118e957509f8413087d355fbf6370",
+  "calibrate.py": "4ba3e133a359ec3dc62cb874303cbda22a63857fe54184b6fa4a672ce4def570",
+  "calibration_core.py": "a7043cf74c2ef1d4a8fcade0855f1836c53acc3e57b1723257e254e8a3dca3f1",
+  "expected_source_manifest.json": "0dddbd9bd90cb674a1cc3812139cc5bb84c0f834addcaf5ead69e8e4683f97e1",
+  "inputs/train.jsonl": "adcbf9771c5ac3556a3b645293d132ad565c9033ef8d82e4c14031cd0f60b2eb",
+  "inputs/validation_original_300.jsonl": "2139a7c220259c1e1270e5123ef104465e0356d44ac2ab2f4ce930c0781c57ed",
+  "kl_reference.py": "f5e0067271026466b4fab8fe7c63c7090c5382528020ac8729f3657e256c8981",
+  "legacy.py": "82bd87d841e2867fd6a34781b9bc75b14fcbfed6cf7dd75d5bd7a1a801a63c94",
+  "original_protocol.json": "762a262974cd3a20e2def1d61f585447b8971f243782af87c69af87f331195bd",
+  "plot_curves.py": "c529da2044f6529e0d74e75d58cbc40847586689135f85394419cbfb3860fa34",
+  "protocol.json": "edabf59bce59d8be84a07cccc0d19818d437ef37b24ff64dd49cc0f3d2f1b2bb",
+  "run_calibration.sbatch": "09e546cb131431b4deffd8d8e65ddbb6ea3f63c13f3f7add16c9fedae089f0c0",
+  "source_guard.py": "e16e7c9e49af147b35c2025bfa13f3249838a03bcc84d45de53a9084eca4c797",
+  "source_provenance.json": "6b825e209a9e3a16d224e4b5e684b6ffa7e7ed87143ee749055e0b32784c3035",
+  "state_io.py": "6b86855d919c40057601e2e290cc24adc46bb877416035c8a8a55f6913892e11"
+}

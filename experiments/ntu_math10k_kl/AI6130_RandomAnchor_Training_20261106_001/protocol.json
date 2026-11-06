@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "condition": "final",
+  "experiment_id": "random-whole128-lambda001-full3ep-20261106-001",
+  "output_directory": "results",
+  "model": {
+    "repository_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "datasets": {
+    "math10k": {
+      "repository_id": "AGI-Edgerunners/LLM-Adapters",
+      "source_file": "ft-training_set/math_10k.json",
+      "source_sha256": "0342d0d860ad8592b579329337c90e42eefd3d9f2898043140cbd120630418b8",
+      "source_examples": 9919,
+      "training_ids_manifest": "inputs/train.jsonl",
+      "validation_ids_manifest": "inputs/validation_original_300.jsonl",
+      "split_seed": 42,
+      "validation_size": 300
+    }
+  },
+  "seed": 42,
+  "lora": {
+    "rank": 128,
+    "alpha": 256,
+    "dropout": 0.0,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "precision": "bf16",
+    "quantization": "none"
+  },
+  "training": {
+    "training_ids_manifest": "inputs/train.jsonl",
+    "optimizer": "adamw",
+    "learning_rate": 5e-05,
+    "scheduler": "linear",
+    "warmup_steps": 361,
+    "batch_policy": "shuffled_repeat",
+    "per_device_batch_size": 1,
+    "gradient_accumulation_steps": 8,
+    "max_steps": 3609,
+    "epochs": 3,
+    "target_examples": 9619,
+    "target_tokens": null,
+    "anchor_interleave_every_steps": 4,
+    "weight_decay": 0.01,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "runtime": {
+    "device": "cuda:0",
+    "max_sequence_tokens": 2048,
+    "validation_max_new_tokens": 256,
+    "target_system_prompt": "",
+    "anchor_system_prompt": "",
+    "teacher_max_new_tokens": 256,
+    "anchor_tokens_per_update": 64,
+    "checkpoint_every_steps": 300,
+    "max_grad_norm": 1,
+    "scale_kl_by_temperature_squared": true,
+    "target_answer_append_eos": true,
+    "gradient_checkpointing": false,
+    "max_wall_seconds": 19800,
+    "recovery_every_steps": 50
+  },
+  "anchor_selection": {
+    "method": "random",
+    "token_budget": 22100,
+    "damage_weight": null,
+    "candidate_pool_manifest": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/experiment_256_v1/full/teacher_cache.jsonl",
+    "selected_ids_manifest": "random_whole_response_preview.json"
+  },
+  "kl": {
+    "direction": "teacher_to_student",
+    "temperature": 1,
+    "coefficient": 0.01,
+    "token_mask": "response_tokens",
+    "normalization": "token_mean",
+    "teacher_continuation": "/home/msai/hemanth005/AI6130_Srihari_Step5_20261102/experiment_256_v1/full/teacher_cache.jsonl"
+  },
+  "evaluation": {
+    "prompt_format": "Question: {question}\\nAnswer:",
+    "tokenizer": {
+      "repo_id": "meta-llama/Llama-3.2-3B",
+      "revision": "13afe5124825b4f3751f836b40dafda64c1ed062",
+      "use_fast": true,
+      "add_special_tokens": false
+    },
+    "metric": "original300_response_token_weighted_reference_loss_including_EOS"
+  },
+  "environment": {
+    "python_version": "3.12.14",
+    "software_versions": "torch=2.11.0+cu128; transformers=4.57.6; datasets=4.8.5; peft=0.21.0; accelerate=1.15.0; sentence-transformers=5.7.0; matplotlib=3.11.2",
+    "hardware": "Slurm-managed NVIDIA A40 GPU with 48 GB VRAM"
+  },
+  "replication_notes": {
+    "scope": "Matched whole-response Random baseline with original300 validation",
+    "known_validation_overlap": "29 exact + 41 whitespace-normalized training prompt matches; one additional within-validation duplicate; not independent unseen validation",
+    "source_target_recipe": "Original teammate three-epoch recipe and exact epoch order preserved",
+    "changes": [
+      "Random selection is reproduced from the shared teacher-cache IDs and response lengths, using sorted IDs and a seeded shuffle.",
+      "The 22,100 unique response positions are an inventory. The matched full-trajectory training budget is 57,728 repeated exposures.",
+      "67 responses hit the frozen 256-token generation cap. The selected responses are kept as cached.",
+      "One seed and original300 training overlap limit the comparison."
+    ]
+  }
+}

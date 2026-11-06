@@ -1,0 +1,9 @@
+{
+  "README.md": "1b9ede40acc2ae3df9c1c77e9d84daccf807599acd2b73133ebdb434665e797c",
+  "expected_parent_result.json": "4fafce3ac90d0b8368bd499b16262d692b2721cc1acda02643c1fe93f7a3d94c",
+  "full_train.py": "19ebdf1015c86153f611dce976873190ee8ed5a636cff462ad1f2bbcecfbb882",
+  "parent_files.sha256.json": "fddeadcff2f3481920076f212ef658aaa0b95585f7b12bf1b1936a5bb400b918",
+  "plan.json": "5dd08ea7caf7ce83a13437c724ad7d678b36c3df2ea8f56a655852b56745ab2c",
+  "plot_full.py": "295648dcba3dd0aa7c030b852215df517c0a616f3612660cb6aaec28f0349702",
+  "run_full.sbatch": "963d68cf42d9296ca200b99bac18e93e4c52b3bac28cfb99480e74d85fbbf7cf"
+}

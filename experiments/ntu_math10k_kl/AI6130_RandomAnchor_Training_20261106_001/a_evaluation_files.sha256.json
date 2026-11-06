@@ -1,0 +1,17 @@
+{
+  "README.md": "7d0084a832d7f596f08268a1d74ef46e2674157f3908954b30d4ad04b0e36e83",
+  "data_eval.py": "e76e2b0373bf761b72ad2a33aa1ec871d7eec0c0731b775777e18bfba3833139",
+  "eval_io.py": "c08ec89e95d6e9abac7d17ba58c4ef308965ea36d5237c40b57f4094a1a91589",
+  "evaluate_run.py": "1917ba847fe7429013e24f6f9a96679f312f8241384aa70f1ad70c2fb95ddc17",
+  "evaluation.json": "c592777b5c004beb67c7161b7f3596ccb04e79eabacd14d7d162808a63ea0332",
+  "expected_full_report.json": "95e2425f4387b8b95a29db5c4bd65abf611478819695df90c7d0511afafa54ce",
+  "full_training_files.sha256.json": "32be79a600efa799ce86529288ebc38e527fff5871bce21b9d043c59a6c7623d",
+  "plot_eval.py": "afdddd197561ac332774168dccafa966f1b80aae32b0374a478af514d7e7e06f",
+  "run_evaluation.sbatch": "09d6032023f3adfc1a1bc084eb1e5afa9d6de17b917ff2875b9e6aba7778a983",
+  "snapshot/kl_anchors/__init__.py": "d0471cd3e046d5592d9da7bbb574bcc637a36c06b4adfb366f732929e5e08c74",
+  "snapshot/kl_anchors/evaluate.py": "bbeffed26a8ee3ffab3672f6af056dc44e14e8c5349063fde56c60cbb2786b90",
+  "snapshot/kl_anchors/evaluate_math10k.py": "0ca0d01e5c254e4377e6d8f5dac12c9df010faf84ae50b33c192e64b16adfbe5",
+  "snapshot/kl_anchors/metrics.py": "3f63821c384168aaaa6c0a36edfa1437258e23c110e5d4e30d5d264445c0f453",
+  "snapshot_provenance.json": "6de234c78373d47e86887d9d64011051ba2901b9d287d2818bb4f25d6c0a1376",
+  "source_eval.py": "44fd6e66b169a08289637b7f540fbfc01b30ec6ccfe6f0015c3992a24f7ab3de"
+}

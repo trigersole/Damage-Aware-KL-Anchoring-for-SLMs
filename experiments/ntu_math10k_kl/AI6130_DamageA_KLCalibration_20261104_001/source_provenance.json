@@ -1,0 +1,49 @@
+{
+  "scope": "Isolated approved three-condition original300 calibration",
+  "legacy_extraction": {
+    "training_core.py": {
+      "source_sha256": "de881d10621ec7c4c8750328fcd55a190cacd7f5e11692f9e3e092ea0bd58f14",
+      "definitions": {
+        "TokenizedExample": "72e57ca5390802a406520d269794bca879fc4a72ba2a5b931d79ce9c7bfe613c",
+        "tokenize_completion": "76b09d5b56a01d8c8d6f1f8e913c07516235f7c9e71b9147d64d3d5e2c2a6865",
+        "collate": "717ebcd3d854a1edb1ae31089d1c5c723288aefffa7989325889176d0690680b",
+        "target_causal_loss": "87efe2baccb6f3cc0d0da18e9fbb5dc56f6697285b772c665859c8ae40c09bc0",
+        "training_update": "0f993efc9412f88ecd9ad2ff74a07efd31b8b5f3564b11036b4af79c3adb6da3"
+      }
+    },
+    "hf_runtime.py": {
+      "source_sha256": "605b185f7229b40004df448a772bb145503a6d44a03fafc35edc0be4212b8cde",
+      "definitions": {
+        "set_seed": "bfdc0394fe924eb2fe25150fc8bed74c077cf889359960d4c7b4a5070aea87b4",
+        "load_tokenizer": "ef5e6d9da45cd5a84df838b42681e8b70c9c158c2fab0a15894c4dd502d6eb8c",
+        "load_base": "3049b49b3a482c87537b237c3b2d05c9a000f97ab1b5d9cfbcfc357e34611e10",
+        "attach_new_lora": "8c731274869c0c38fca585ba2f5160faba0c2da718df3e97a761a0745d25c151"
+      }
+    },
+    "train_math10k.py": {
+      "source_sha256": "80ef72c53a161b0533f4b1b0797cf0fe9c7142071cdf08fa0e8c40c834ff9532",
+      "definitions": {
+        "render_prompt": "02610c8ddebf571d8f7e1d0ffa2e25d50a87bea5a9aab73c7c83fd858a7bddfb",
+        "make_examples": "23e2fd8a9e260566a5a26282156813ee161faedd3020f0722a4ce519c11df1de",
+        "epoch_batches": "6c0ff707a78d2df71ccaf92415a399affce4f3cb98f175ad11f3c1f9e9afc96f"
+      }
+    }
+  },
+  "legacy_snapshot_sha256": "82bd87d841e2867fd6a34781b9bc75b14fcbfed6cf7dd75d5bd7a1a801a63c94",
+  "legacy_snapshot_unchanged": true,
+  "KL_reference_sha256": "f5e0067271026466b4fab8fe7c63c7090c5382528020ac8729f3657e256c8981",
+  "remote_original_source_guard": "expected_source_manifest.json is checked against the unchanged NTU experiment before any model load",
+  "data": {
+    "train.jsonl": "adcbf9771c5ac3556a3b645293d132ad565c9033ef8d82e4c14031cd0f60b2eb",
+    "validation_original_300.jsonl": "2139a7c220259c1e1270e5123ef104465e0356d44ac2ab2f4ce930c0781c57ed"
+  },
+  "runtime_scope": "No model weights or teacher outputs are included; existing pinned NTU caches are required",
+  "new_implementation": [
+    "calibrate.py",
+    "calibration_core.py",
+    "state_io.py",
+    "plot_curves.py"
+  ],
+  "numerical_adaptation": "Anchor microbatch KL sums divided by64; scored rows selected before full-vocabulary softmax; equivalence tested",
+  "local_root_execution_files_preserved": 62
+}

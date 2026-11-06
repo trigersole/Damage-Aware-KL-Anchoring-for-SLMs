@@ -1,0 +1,30 @@
+{
+  "source_guard.py": {
+    "source": "artifacts/damage-B-top128-gt8-2026-11-05-001/AI6130_DamageB_Top128_GT8_20261105_001/source_guard.py",
+    "sha256": "d476688dd092ba69bf59f11b77512e9550d23eabb2aa5b838335414690438a10"
+  },
+  "selection_checks.py": {
+    "source": "artifacts/damage-B-top128-gt8-2026-11-05-001/AI6130_DamageB_Top128_GT8_20261105_001/selection_checks.py",
+    "sha256": "92066da3db759bafafc757783705607bc0cc650d116ce3bc68e985e959bae038"
+  },
+  "expected_source_manifest.json": {
+    "source": "artifacts/damage-B-top128-gt8-2026-11-05-001/AI6130_DamageB_Top128_GT8_20261105_001/expected_source_manifest.json",
+    "sha256": "0dddbd9bd90cb674a1cc3812139cc5bb84c0f834addcaf5ead69e8e4683f97e1"
+  },
+  "calibration_core.py": {
+    "source": "artifacts/llama32-semantic-calibration-2026-10-27-001/AI6130_Llama32_SemanticCalibration_20261027_001/calibration_core.py",
+    "sha256": "05d47fb90fdbe68f6ed3a940f5d1094ba9ab4c3a58d2ee490cd4e02480d22147"
+  },
+  "io_utils.py": {
+    "source": "artifacts/llama32-semantic-calibration-2026-10-27-001/AI6130_Llama32_SemanticCalibration_20261027_001/io_utils.py",
+    "sha256": "9366857003f8e23a8c78b7dfc6cee7d835f3a4b40f73f481361e811ae94da4e2"
+  },
+  "rank_fusion.py": {
+    "source": "artifacts/damage-diversity-selection-2026-11-05-001/rank_fusion.py",
+    "sha256": "db85b428d8281a4971d95c4391a9121327760c1ebd185e9c3c2c5270cef63411"
+  },
+  "calibration_identity.json": {
+    "source": "artifacts/llama32-reference-extension-2026-10-28-001/AI6130_Llama32_ReferenceExtension_20261028_001/calibration_identity.json",
+    "sha256": "4be4d7afc3acef2a93c46676940b493f69095cbecec96390a24fe2d7503ea508"
+  }
+}

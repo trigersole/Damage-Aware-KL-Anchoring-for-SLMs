@@ -1,0 +1,16 @@
+{
+  "README.md": "c56230028e74c085c4475374ddaafe5ac9ab833a2624cb6995b2bb6b26a41608",
+  "approval.json": "fc42323383f700c8696e9dba548b07f30700339108b6010fa2bdf76030a0b298",
+  "calibration_core.py": "05d47fb90fdbe68f6ed3a940f5d1094ba9ab4c3a58d2ee490cd4e02480d22147",
+  "calibration_identity.json": "4be4d7afc3acef2a93c46676940b493f69095cbecec96390a24fe2d7503ea508",
+  "copied_sources.json": "c0070484e994aae50bd7c8c3c86e5e5090a459b8db07bf5e43f4f03c674ff925",
+  "expected_source_manifest.json": "0dddbd9bd90cb674a1cc3812139cc5bb84c0f834addcaf5ead69e8e4683f97e1",
+  "io_utils.py": "9366857003f8e23a8c78b7dfc6cee7d835f3a4b40f73f481361e811ae94da4e2",
+  "rank_fusion.py": "db85b428d8281a4971d95c4391a9121327760c1ebd185e9c3c2c5270cef63411",
+  "run_selection.sbatch": "611a16da6102cdcbf97f78b4544e7d441d2c9831fc4ef6440ebe18fa37bbb7a2",
+  "select_cached.py": "f2d41cbbc5d829f04392de42aee5b0e03de0d5c5091b3edc145e7da051ed5f5a",
+  "selection.json": "4637a9b26931bcc7104da5581099330a3f9a325f1e8b69a929df0cb77f641f98",
+  "selection_checks.py": "92066da3db759bafafc757783705607bc0cc650d116ce3bc68e985e959bae038",
+  "source_guard.py": "d476688dd092ba69bf59f11b77512e9550d23eabb2aa5b838335414690438a10",
+  "vector_ranking.py": "ab60565197a99700e8f2bb3ea1a85761e5508bad592705f37652323c9764d49e"
+}

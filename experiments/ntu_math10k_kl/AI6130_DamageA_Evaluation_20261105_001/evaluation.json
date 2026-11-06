@@ -1,0 +1,101 @@
+{
+  "evaluation_id": "damage-A-step2400-friend256-five-20261105-001",
+  "approved": true,
+  "approval": "Hemanth2026-11-05:256 tokens\u2014match friend\u2019s reviewed setup; question named three models and five benchmarks",
+  "model": {
+    "repo_id": "meta-llama/Llama-3.2-3B",
+    "revision": "13afe5124825b4f3751f836b40dafda64c1ed062"
+  },
+  "modes": [
+    "base",
+    "task_only",
+    "damage_A"
+  ],
+  "selected_step": 2400,
+  "full_training_package": "/home/msai/hemanth005/AI6130_DamageA_FullTrain_20261104_001",
+  "full_training_bundle_sha256": "32be79a600efa799ce86529288ebc38e527fff5871bce21b9d043c59a6c7623d",
+  "baseline": {
+    "local_directory": "/home/msai/hemanth005/AI6130_Llama32_LossSubsetReview_20261027_001/checkpoint-files/math10k-llama32-3b-full-01/checkpoints/step_002400",
+    "fallback_repo_id": "Srihari-hgf/llama_3.2_3b_math_dataset",
+    "fallback_revision": "40a117dfe5301709bdd60346b3507480a50f5ad7",
+    "weights_sha256": "e6196178a27f3ed4e86c5bc2259fe1f6cd19a6d6c5ef4510595c7287496caf61",
+    "config_sha256": "3c415dc4fa9c149b6330459939ac75fb967c1bd4c1bd46fb177470ce24c12861",
+    "provenance": "Original teammate task-only step2400,bytes matched to reviewed checkpoints and upload;not fresh clean229 reproduction"
+  },
+  "seed": 42,
+  "dtype": "bfloat16",
+  "quantization": "none",
+  "context_tokens": 4096,
+  "max_wall_seconds": 19800,
+  "generation": {
+    "max_new_tokens": 256,
+    "do_sample": false,
+    "num_beams": 1,
+    "skip_special_tokens": true
+  },
+  "tokenizer": {
+    "use_fast": true,
+    "add_special_tokens": false
+  },
+  "benchmarks": {
+    "gsm8k": {
+      "repo_id": "openai/gsm8k",
+      "config": "main",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "split": "test",
+      "expected_count": 1319
+    },
+    "arc_easy": {
+      "repo_id": "allenai/ai2_arc",
+      "config": "ARC-Easy",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "split": "test",
+      "expected_count": 2376
+    },
+    "arc_challenge": {
+      "repo_id": "allenai/ai2_arc",
+      "config": "ARC-Challenge",
+      "revision": "210d026faf9955653af8916fad021475a3f00453",
+      "split": "test",
+      "expected_count": 1172
+    },
+    "openbookqa": {
+      "repo_id": "allenai/openbookqa",
+      "config": "main",
+      "revision": "388097ea7776314e93a529163e0fea805b8a6454",
+      "split": "test",
+      "expected_count": 500
+    },
+    "social_iqa": {
+      "url": "https://storage.googleapis.com/ai2-mosaic/public/socialiqa/socialiqa-train-dev.zip",
+      "sha256": "ee073914a0fc33265cfbcfc50ec20df9b2e07809c3f420f599138d1f394ef5c3",
+      "member": "socialiqa-train-dev/dev.jsonl",
+      "member_sha256": "d8128dfe60783a9971b954ca82dd57b87b05d5d40468876d51a8e1ad2c557465",
+      "repo_id": "allenai/social_i_qa",
+      "revision": "8835ceb9141d7896d9d968634a9b21ae440e3ec5",
+      "config": null,
+      "split": "validation",
+      "expected_count": 1954,
+      "labels_member": "socialiqa-train-dev/dev-labels.lst",
+      "labels_sha256": "2d882ff71969d3980d37dd07aecdf9093c6e63e27c670f3a203bcf3b9b74bc05"
+    }
+  },
+  "scoring": {
+    "gsm8k": "Reviewed friend zero-shot Q/A,greedy256,native EOS,original final-number parser",
+    "multiple_choice": "Exact friend Question/Options/select-letter/Answer; separate leading-space label encoding;summed loglikelihood,no length normalization,FP32 logsoftmax,first tie"
+  },
+  "overlap_policy": "input-only exact NFKC/casefold/alphanumeric surface flags against actual train/original300/selected anchors; no automatic removals",
+  "expected_items_per_model": 7321,
+  "expected_total_predictions": 21963,
+  "training_budget_label": {
+    "selected_prompts": 128,
+    "selected_unique_positions": 255,
+    "frequency": 4,
+    "positions_per_event": 64,
+    "full_training_exposure": 57728,
+    "selected_checkpoint_exposure": 38400,
+    "team_other_selector_budgets_verified": false
+  },
+  "reuse_previous_metrics": false,
+  "automatic_training_or_checkpoint_changes": false
+}

@@ -1,0 +1,144 @@
+{
+  "status": "complete",
+  "step": 3609,
+  "inherited_updates": 600,
+  "coefficient": 0.01,
+  "validation_history": [
+    {
+      "step": 0,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.7781665725743999,
+      "selected_set_anchor_KL": 0.0,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 300,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.4311630382529025,
+      "selected_set_anchor_KL": 0.06779203401768909,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 600,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.4026650336146966,
+      "selected_set_anchor_KL": 0.052157240938030036,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 900,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.38640583046813215,
+      "selected_set_anchor_KL": 0.04022500728275262,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 1200,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3765021840322669,
+      "selected_set_anchor_KL": 0.03572558200388563,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 1500,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.37666323848947797,
+      "selected_set_anchor_KL": 0.027337797986818294,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 1800,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.37093456060175023,
+      "selected_set_anchor_KL": 0.025200899317860605,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 2100,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3667125889396971,
+      "selected_set_anchor_KL": 0.025061725372192905,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 2400,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3627283786052847,
+      "selected_set_anchor_KL": 0.02055219393223524,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 2700,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3788893036965621,
+      "selected_set_anchor_KL": 0.020062232054039543,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 3000,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3767539547672525,
+      "selected_set_anchor_KL": 0.018983919502181167,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 3300,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.37618146838187067,
+      "selected_set_anchor_KL": 0.01814087041671954,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 3600,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.37484102402663505,
+      "selected_set_anchor_KL": 0.017770654700842558,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    },
+    {
+      "step": 3609,
+      "questions": 300,
+      "response_tokens": 39614,
+      "validation_loss": 0.3747568927809108,
+      "selected_set_anchor_KL": 0.017868734381216413,
+      "anchor_diagnostic_positions": 255,
+      "anchor_diagnostic_is_training_set_not_retention": true
+    }
+  ],
+  "best": {
+    "step": 2400,
+    "validation_loss": 0.3627283786052847,
+    "checkpoint": "/home/msai/hemanth005/AI6130_DamageA_FullTrain_20261104_001/results/damage-A-lambda001-full3ep-20261104-001/checkpoints/step_002400",
+    "metric": "original300 response-token-weighted reference loss includingEOS",
+    "exact_tie_break": "earlier step",
+    "official_test_used": false
+  },
+  "retention_scores": null,
+  "synthetic_layout_fixture": false
+}

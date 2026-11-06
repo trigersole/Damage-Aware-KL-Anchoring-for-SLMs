@@ -1,0 +1,8 @@
+{
+  "README.md": "f18b39734fc7165ec5ea01fce11c2ac94a60ed24aca51b30ce24ba93fa3b21b8",
+  "expected_source_manifest.json": "0dddbd9bd90cb674a1cc3812139cc5bb84c0f834addcaf5ead69e8e4683f97e1",
+  "export_damage_A.py": "40780469c2d78ca0d077d0d01aa8ac49066de6a7399318e91d40577bf5c2c228",
+  "run_export.sbatch": "280d51c3f78749ac8c691f490956f1917717735fb7989650d20fdf6debfada7f",
+  "selection.json": "79232f3a17aa64108a06f960127a11cb6cdae46d6845726fc1576c7158b57d18",
+  "source_guard.py": "e16e7c9e49af147b35c2025bfa13f3249838a03bcc84d45de53a9084eca4c797"
+}

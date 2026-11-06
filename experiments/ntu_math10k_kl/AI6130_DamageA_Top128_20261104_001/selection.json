@@ -1,0 +1,10 @@
+{
+  "variant": "A",
+  "count": 128,
+  "ranking": "descending_existing_KL",
+  "tie_break": "example_id_ascending",
+  "minimum_response_tokens": null,
+  "minimum_KL": null,
+  "EOS_included": true,
+  "training_authorized": false
+}
